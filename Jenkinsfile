@@ -390,61 +390,61 @@ pipeline {
             }
         }
 
-        // stage("Attached defect screenshots") {
-        //     agent { label "${map.current_node}" }
-        //     steps {
-        //         dir("${map.current_path}") {
-        //             script {
-        //                 println "✅✅✅✅ Attached defect screenshots or bypass ✅✅✅✅"
+        stage("Attached defect screenshots") {
+            agent { label "${map.current_node}" }
+            steps {
+                dir("${map.current_path}") {
+                    script {
+                        println "✅✅✅✅ Attached defect screenshots or bypass ✅✅✅✅"
 
-        //                 if (map.cucumber.defect_info.size() > 0) {
-        //                     // ! cURL로 각 defect issue에 맞는 defect screenshot을 업로드한다.
-        //                     map.cucumber.defect_info.each { key, value ->
-        //                         sh script: "curl -D- -u ${map.jira.auth_user} -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@${map.cucumber.defect_screenshot_path}/${value}.png' ${map.jira.base_url}/rest/api/2/issue/${key}/attachments", returnStdout: false
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+                        if (map.cucumber.defect_info.size() > 0) {
+                            // ! cURL로 각 defect issue에 맞는 defect screenshot을 업로드한다.
+                            map.cucumber.defect_info.each { key, value ->
+                                sh script: "curl -D- -u ${map.jira.auth_user} -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@${map.cucumber.defect_screenshot_path}/${value}.png' ${map.jira.base_url}/rest/api/3/issue/${key}/attachments", returnStdout: false
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-        // stage("Generate cucumber html reports") {
-        //     agent { label "${map.current_node}" }
-        //     steps {
-        //         dir("${map.current_path}") {
-        //             script {
-        //                 println "✅✅✅✅ Generate cucumber html reports ✅✅✅✅"
-        //                 // ! Jenkins plugin -> Cucumber reports를 설치한 상태에서 실행해야 한다.
-        //                 // ! buildStatus가 UNSTABLE이 의미하는 건 테스트 실행 후 하나라도 fail이 생기면 build의 status가 unstable 상태로 끝남, 만약 모두 패스면 success로 끝남
-        //                 // ! 이렇게 하는 이유는 테스트가 fail이 나는 scenario가 있다고해서 build가 fail이라고 볼 순 없고 그렇다고 success라고 보기도 애매하기 때문에 상황에 맞춰서 build status를 표시하게 하기 위함
-        //                 cucumber buildStatus: 'UNSTABLE',
-        //                     reportTitle: 'My report',
-        //                     fileIncludePattern: '**/*.json',
-        //                     trendsLimit: 10,
-        //                     classifications: [
-        //                         [
-        //                             'key': 'Browser',
-        //                             'value': 'Chrome'
-        //                         ]
-        //                     ]
+        stage("Generate cucumber html reports") {
+            agent { label "${map.current_node}" }
+            steps {
+                dir("${map.current_path}") {
+                    script {
+                        println "✅✅✅✅ Generate cucumber html reports ✅✅✅✅"
+                        // ! Jenkins plugin -> Cucumber reports를 설치한 상태에서 실행해야 한다.
+                        // ! buildStatus가 UNSTABLE이 의미하는 건 테스트 실행 후 하나라도 fail이 생기면 build의 status가 unstable 상태로 끝남, 만약 모두 패스면 success로 끝남
+                        // ! 이렇게 하는 이유는 테스트가 fail이 나는 scenario가 있다고해서 build가 fail이라고 볼 순 없고 그렇다고 success라고 보기도 애매하기 때문에 상황에 맞춰서 build status를 표시하게 하기 위함
+                        cucumber buildStatus: 'UNSTABLE',
+                            reportTitle: 'My report',
+                            fileIncludePattern: '**/*.json',
+                            trendsLimit: 10,
+                            classifications: [
+                                [
+                                    'key': 'Browser',
+                                    'value': 'Chrome'
+                                ]
+                            ]
                         
-        //                 def payload = [
-        //                     "fields": [
-        //                         "${map.jira.test_result_link}": "${BUILD_URL}${map.cucumber.report_link}"
-        //                     ]
-        //                 ]
-        //                 payload = JsonOutput.toJson(payload)
+                        // def payload = [
+                        //     "fields": [
+                        //         "${map.jira.test_result_link}": "${BUILD_URL}${map.cucumber.report_link}"
+                        //     ]
+                        // ]
+                        // payload = JsonOutput.toJson(payload)
                         
-        //                 // ! test plan/run 이슈의 Test Result Link 필드에 cucumber report url을 fetch
-        //                 updateIssue(map.jira.base_url, map.jira.auth, payload, JIRA_ISSUE_KEY)
+                        // // ! test plan/run 이슈의 Test Result Link 필드에 cucumber report url을 fetch
+                        // updateIssue(map.jira.base_url, map.jira.auth, payload, JIRA_ISSUE_KEY)
                         
-        //                 // ! test plan/run 이슈의 attachment로 cucumber report를 올림 이 파일은 jenkins의 plugin인 cucumber-report가 아니고 cucumber runner를 실행할 때 실행 후 만들어지는 html 파일임
-        //                 // ! 이렇게 하는 이유는 Jenkins 권한을 가지지 않은 사람이 있는 경우 위에 URL에 접근이 불가능하므로
-        //                 sh("curl -D- -u ${map.jira.auth_user} -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@${map.cucumber.cucumber_html}' ${map.jira.base_url}/rest/api/2/issue/${JIRA_ISSUE_KEY}/attachments")
-        //             }
-        //         }
-        //     } 
-        // }
+                        // ! test plan/run 이슈의 attachment로 cucumber report를 올림 이 파일은 jenkins의 plugin인 cucumber-report가 아니고 cucumber runner를 실행할 때 실행 후 만들어지는 html 파일임
+                        // ! 이렇게 하는 이유는 Jenkins 권한을 가지지 않은 사람이 있는 경우 위에 URL에 접근이 불가능하므로
+                        sh("curl -D- -u ${map.jira.auth_user} -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@${map.cucumber.cucumber_html}' ${map.jira.base_url}/rest/api/3/issue/${JIRA_ISSUE_KEY}/attachments")
+                    }
+                }
+            } 
+        }
     }
 
     // post {
@@ -523,7 +523,7 @@ def init(def map) {
     // ! Job Run No. field
     map.jira.job_link = "customfield_11211"
     // ! Test Result Link field
-    map.jira.test_result_link = "customfield_11212"
+    map.jira.test_result_link = "customfield_10039"
     
 
     map.const = [:]
