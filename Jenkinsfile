@@ -126,9 +126,16 @@ pipeline {
                         // ! JIRA에 올라가 있는 scenario를 가져와서 description으로 해당 JIRA issue key를 붙여준다.
                         // ! issue key를 붙여주는 이유는 해당 시나리오가 JIRA에 어떤 issue와 매핑되는지 알기 위함
                         map.testcases.each { key, value ->
-                            def addedDescription = value.replaceFirst("\r\n", ("\r\n" + key + "\n\n"))
-                            feature += addedDescription
-                            feature += "\n\n"
+                            def addedDescription = null
+                            if (value.contains("\r\n")) {
+                                addedDescription = value.replaceFirst("\r\n", ("\r\n" + key + "\n\n"))
+                                feature += addedDescription
+                                feature += "\n\n"
+                            } else {
+                                addedDescription = value.replaceFirst("\n", ("\n" + key + "\n\n"))
+                                feature += addedDescription
+                                feature += "\n\n"
+                            }
                         }
                         
                         // ! fileExists 라는 Jenkins Pipeline에서 제공하는 method
