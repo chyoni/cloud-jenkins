@@ -459,6 +459,8 @@ pipeline {
                     remote.allowAnyHosts = true
 
                     println "job name: ${JOB_NAME}"
+                    println "jenkins server: ${jenkins_server}"
+                    println "jenkins server port: ${jenkins_server_port as int}"
 
                     sshCommand remote: remote, command: "cd /var/lib; ls -al"
                 }
