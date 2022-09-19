@@ -100,9 +100,10 @@ pipeline {
 
                     // ! 이슈들 하나하나의 issueKey:scenario를 map에 저장
                     for (def issue in result.issues) {
-                        println "issue_scenario : ${issue.fields}"
-                        // map.testcases.put(issue.key, issue.fields[map.jira.scenario_field])
+                        map.testcases.put(issue.key, issue.fields[map.jira.scenario_field].content[0].content[0].text)
                     }
+
+                    println "testcases: ${map.testcases}"
                 }
             }
         }
