@@ -428,15 +428,15 @@ pipeline {
                                 ]
                             ]
                         
-                        // def payload = [
-                        //     "fields": [
-                        //         "${map.jira.test_result_link}": "${BUILD_URL}${map.cucumber.report_link}"
-                        //     ]
-                        // ]
-                        // payload = JsonOutput.toJson(payload)
+                        def payload = [
+                            "fields": [
+                                "${map.jira.test_result_link}": "${BUILD_URL}${map.cucumber.report_link}"
+                            ]
+                        ]
+                        payload = JsonOutput.toJson(payload)
                         
-                        // // ! test plan/run 이슈의 Test Result Link 필드에 cucumber report url을 fetch
-                        // updateIssue(map.jira.base_url, map.jira.auth, payload, JIRA_ISSUE_KEY)
+                        // ! test plan/run 이슈의 Test Result Link 필드에 cucumber report url을 fetch
+                        updateIssue(map.jira.base_url, map.jira.auth, payload, JIRA_ISSUE_KEY)
                         
                         // ! test plan/run 이슈의 attachment로 cucumber report를 올림 이 파일은 jenkins의 plugin인 cucumber-report가 아니고 cucumber runner를 실행할 때 실행 후 만들어지는 html 파일임
                         // ! 이렇게 하는 이유는 Jenkins 권한을 가지지 않은 사람이 있는 경우 위에 URL에 접근이 불가능하므로
@@ -447,31 +447,31 @@ pipeline {
         }
     }
 
-    // post {
-    //     always {
-    //         script {
-    //             // ! 아래는 jenkins build가 어떻게 끝나든 무조건 test plan/run issue의 'Job Run No' field의 값에 jenkins build id를 넣어줌
-    //             def payload = [
-    //                 "fields": [
-    //                     "${map.jira.job_link}": "#${BUILD_ID}"
-    //                 ]
-    //             ]
-    //             payload = JsonOutput.toJson(payload)
-    //             updateIssue(map.jira.base_url, map.jira.auth, payload, JIRA_ISSUE_KEY)
-    //         }
-    //     }
+    post {
+        always {
+            script {
+                // ! 아래는 jenkins build가 어떻게 끝나든 무조건 test plan/run issue의 'Job Run No' field의 값에 jenkins build id를 넣어줌
+                def payload = [
+                    "fields": [
+                        "${map.jira.job_link}": "#${BUILD_ID}"
+                    ]
+                ]
+                payload = JsonOutput.toJson(payload)
+                updateIssue(map.jira.base_url, map.jira.auth, payload, JIRA_ISSUE_KEY)
+            }
+        }
 
-    //     failure {
-    //         script {
-    //             try {
-    //                 // ! pipeline을 실행하면서 에러가 나서 fail로 떨어지면 무조건 jira plan/run issue의 status를 fail로 처리
-    //                 transitionIssue(map.jira.base_url, map.jira.auth, transitionPayload(map.jira.fail_transition), JIRA_ISSUE_KEY)
+        failure {
+            script {
+                try {
+                    // ! pipeline을 실행하면서 에러가 나서 fail로 떨어지면 무조건 jira plan/run issue의 status를 fail로 처리
+                    transitionIssue(map.jira.base_url, map.jira.auth, transitionPayload(map.jira.fail_transition), JIRA_ISSUE_KEY)
 
-    //                 // ! try catch로 감싼 이유는 이미 status가 fail일 수 있기 때문에 이미 fail인 상태면 처리
-    //             } catch (RuntimeException) {}
-    //         }
-    //     }
-    // }
+                    // ! try catch로 감싼 이유는 이미 status가 fail일 수 있기 때문에 이미 fail인 상태면 처리
+                } catch (RuntimeException) {}
+            }
+        }
+    }
 }
 
 // * methods * //
@@ -521,7 +521,7 @@ def init(def map) {
     // ! bug - test link name 
     map.jira.tests_link = "Tests"
     // ! Job Run No. field
-    map.jira.job_link = "customfield_11211"
+    map.jira.job_link = "customfield_10038"
     // ! Test Result Link field
     map.jira.test_result_link = "customfield_10039"
     
