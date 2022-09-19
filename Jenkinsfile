@@ -61,50 +61,51 @@ pipeline {
             }
         } 
         
-        // stage("Set environments / Get testcases") {
-        //     steps {
-        //         script {
-        //             println "✅✅✅✅ Set environments / Get testcases ✅✅✅✅"
-        //             // ! Jira의 custom field 중 Tablet info 라는 select field의 현재 설정된 값을 가져온다.
-        //             def test_env = map.issue.data.fields[map.const.test_env].value[0]
-        //             println "Test environment (slave) --->" + test_env
+        stage("Set environments / Get testcases") {
+            steps {
+                script {
+                    println "✅✅✅✅ Set environments / Get testcases ✅✅✅✅"
+                    // ! Jira의 custom field 중 Tablet info 라는 select field의 현재 설정된 값을 가져온다.
+                    def test_env = map.issue.data.fields[map.const.test_env].value[0]
+                    println "Test environment (slave) --->" + test_env
 
-        //             // ! init method에서 지정해놓은 agents_ref 중 현재 설정된 Tablet info 필드 값과 일치하는 값이 있는지 확인 후 path, slave 설정 
-        //             map.agents_ref.each { key, value ->
-        //                 if (test_env == key) {
-        //                     map.current_node = key
-        //                     map.current_path = value
-        //                 }
-        //             }
+                    // ! init method에서 지정해놓은 agents_ref 중 현재 설정된 Tablet info 필드 값과 일치하는 값이 있는지 확인 후 path, slave 설정 
+                    map.agents_ref.each { key, value ->
+                        if (test_env == key) {
+                            map.current_node = key
+                            map.current_path = value
+                        }
+                    }
 
-        //             println "current node: " + map.current_node
-        //             println "current node's source path: " + map.current_path
+                    println "current node: " + map.current_node
+                    println "current node's source path: " + map.current_path
 
-        //             // ! 위에서 확인한 Tablet info 값이 지정한 환경 중 무엇과도 일치하지 않으면 에러
-        //             if (map.current_node == null || map.current_path == null) {
-        //                 jenkinsException(map, "JIRA 'Tablet info' field value is invalid. These are the available values: ${map.agents_ref}")
-        //             }
+                    // ! 위에서 확인한 Tablet info 값이 지정한 환경 중 무엇과도 일치하지 않으면 에러
+                    if (map.current_node == null || map.current_path == null) {
+                        jenkinsException(map, "JIRA 'Tablet info' field value is invalid. These are the available values: ${map.agents_ref}")
+                    }
 
-        //             // ! 가져온 Test Plan/Run issue의 Test 대상 필드에 적용된 JQL을 사용하여 get test issues.
-        //             def jql = map.issue.data.fields[map.const.plan_tests]
-        //             if (jql.length() <= 0) {
-        //                 jenkinsException(map, "This 'Test Plan/Run' issues has empty value of 'Test 대상' field")
-        //             }
-        //             // ! JIRA REST API (JQL로 이슈들 가져오기)
-        //             def result = getIssuesByJql(map.jira.base_url, map.jira.auth, jql.toString())
+                    // ! 가져온 Test Plan/Run issue의 Test 대상 필드에 적용된 JQL을 사용하여 get test issues.
+                    def jql = map.issue.data.fields[map.const.plan_tests]
+                    if (jql.length() <= 0) {
+                        jenkinsException(map, "This 'Test Plan/Run' issues has empty value of 'Test 대상' field")
+                    }
+                    // ! JIRA REST API (JQL로 이슈들 가져오기)
+                    def result = getIssuesByJql(map.jira.base_url, map.jira.auth, jql.toString())
 
-        //             // ! 가져온 issue가 없으면 에러처리
-        //             if (result.issues.size() == 0 || result.issues == null) {
-        //                 jenkinsException(map, "This 'Test Plan/Run' issues has no tests")
-        //             }
+                    // ! 가져온 issue가 없으면 에러처리
+                    if (result.issues.size() == 0 || result.issues == null) {
+                        jenkinsException(map, "This 'Test Plan/Run' issues has no tests")
+                    }
 
-        //             // ! 이슈들 하나하나의 issueKey:scenario를 map에 저장
-        //             for (def issue in result.issues) {
-        //                 map.testcases.put(issue.key, issue.fields[map.jira.scenario_field])
-        //             }
-        //         }
-        //     }
-        // }
+                    // ! 이슈들 하나하나의 issueKey:scenario를 map에 저장
+                    for (def issue in result.issues) {
+                        println "issue_scenario : ${issue.fields}"
+                        // map.testcases.put(issue.key, issue.fields[map.jira.scenario_field])
+                    }
+                }
+            }
+        }
 
         // stage("Download testcases on slave") {
         //     // ! agent는 지정한 slave node의 label
@@ -500,11 +501,11 @@ def init(def map) {
 
     map.jira = [:]
     map.jira.site_name = "JIRA_CWCHOI_CLOUD"
-    map.jira.base_url = "https://cwchoiit.atlassian.net/jira"
+    map.jira.base_url = "https://cwchoiit.atlassian.net"
     map.jira.project_key = "TC"
     map.jira.defect_issuetype = "Bug"
     // ! scenario field on tests issue
-    map.jira.scenario_field = "customfield_11205"
+    map.jira.scenario_field = "customfield_10042"
     // ! transition id for test start -> test fail
     map.jira.fail_transition = "21"
     // ! transition id for test start -> finish 
@@ -520,10 +521,10 @@ def init(def map) {
     
 
     map.const = [:]
-    // ! Test plan의 tests field 
-    map.const.plan_tests = "customfield_11208"
-    // ! Test env field (Multi Select field -> array)
-    map.const.test_env = "customfield_11210"
+    // ! Test plan/Run의 'Test 대상' field 
+    map.const.plan_tests = "customfield_10035"
+    // ! Test Plan/Run의 'Tablet Info' field (Multi Select field -> array)
+    map.const.test_env = "customfield_10037"
     map.const.test_plan_issuetype = "Test Plan/Run"
 
     map.cucumber = [:]
@@ -616,7 +617,7 @@ def getIssuesByJql(String baseUrl, String auth, String jql) {
     def encodedJql = java.net.URLEncoder.encode(jql, "UTF-8")
     println "replace jql --> : ${encodedJql}"
 
-    def url = "${baseUrl}/rest/api/2/search?jql=${encodedJql}"
+    def url = "${baseUrl}/rest/api/3/search?jql=${encodedJql}"
     println "url ---> ${url}"
 
 
