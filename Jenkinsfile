@@ -459,7 +459,7 @@ pipeline {
 
                     println "job name: ${JOB_NAME}"
 
-                    sshCommand remote: remote, command: "cd /; cd /var/lib/jenkins; ls -al"
+                    sshCommand remote: remote, command: "cd /var/lib; ls -al"
                 }
             }
         }
