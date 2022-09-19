@@ -153,242 +153,242 @@ pipeline {
             }
         }
 
-        // stage("Checkout slave's local branch") {
-        //     agent {
-        //         label "${map.current_node}"
-        //     }
-        //     steps {
-        //         dir("${map.current_path}") {
-        //             script {
-        //                 println "✅✅✅✅ Checkout slave's local branch ✅✅✅✅"
-        //                 try {
-        //                     // ! slave의 테스트 환경에서 cicd에 사용되는 branch로 checkout (이미 해당 브랜치겠지만 예외상항을 배제)
-        //                     git branch: map.git.branch, url: map.git.url
-        //                 } catch(error) {
-        //                     jenkinsException(map, error)
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        stage("Checkout slave's local branch") {
+            agent {
+                label "${map.current_node}"
+            }
+            steps {
+                dir("${map.current_path}") {
+                    script {
+                        println "✅✅✅✅ Checkout slave's local branch ✅✅✅✅"
+                        try {
+                            // ! slave의 테스트 환경에서 cicd에 사용되는 branch로 checkout (이미 해당 브랜치겠지만 예외상항을 배제)
+                            git branch: map.git.branch, url: map.git.url
+                        } catch(error) {
+                            jenkinsException(map, error)
+                        }
+                    }
+                }
+            }
+        }
 
-        // stage("Build") {
-        //     agent {
-        //         label "${map.current_node}"
-        //     }
-        //     steps {
-        //         dir("${map.current_path}") {
-        //             script {
-        //                 println "✅✅✅✅ Build ✅✅✅✅"
-        //                 try {
-        //                     // ! maven build project
-        //                     sh('mvn clean compile -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8')
-        //                 } catch (error) {
-        //                     throwableException(map, error)
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        stage("Build") {
+            agent {
+                label "${map.current_node}"
+            }
+            steps {
+                dir("${map.current_path}") {
+                    script {
+                        println "✅✅✅✅ Build ✅✅✅✅"
+                        try {
+                            // ! maven build project
+                            sh('mvn clean compile -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8')
+                        } catch (error) {
+                            throwableException(map, error)
+                        }
+                    }
+                }
+            }
+        }
 
 
-        // stage("Run automation testing") {
-        //     // ! agent는 등록한 slave에서만 해당 stage를 실행시킬 수 있다는 의미
-        //     agent{
-        //         label "${map.current_node}"
-        //     }
-        //     steps {
-        //         dir("${map.current_path}") {
-        //             script {
-        //                 println "✅✅✅✅ Run automation testing ✅✅✅✅"
-        //                 println "source location ==> ${map.current_path}"
+        stage("Run automation testing") {
+            // ! agent는 등록한 slave에서만 해당 stage를 실행시킬 수 있다는 의미
+            agent{
+                label "${map.current_node}"
+            }
+            steps {
+                dir("${map.current_path}") {
+                    script {
+                        println "✅✅✅✅ Run automation testing ✅✅✅✅"
+                        println "source location ==> ${map.current_path}"
 
-        //                 try {
-        //                     // ! Start appium server
-        //                     // ! Real device로 테스트하기 때문에 0.0.0.0 으로 실행시켜야 한다.
+                        try {
+                            // ! Start appium server
+                            // ! Real device로 테스트하기 때문에 0.0.0.0 으로 실행시켜야 한다.
 
-        //                     // ! background로 실행하기 위해 뒤에 &
-        //                     // ! 실행 후 10초정도 대기
-        //                     sh "appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT} &"
-        //                     sleep 10
-        //                 } catch(error) {
-        //                     throwableException(map, error)
-        //                 }
+                            // ! background로 실행하기 위해 뒤에 &
+                            // ! 실행 후 10초정도 대기
+                            sh "appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT} &"
+                            sleep 10
+                        } catch(error) {
+                            throwableException(map, error)
+                        }
 
-        //                 // ! 기존 defect_screenshot 폴더와 파일을 삭제
-        //                 if (fileExists("${map.cucumber.defect_screenshot_path}")) {
-        //                     sh("rm -rf ${map.cucumber.defect_screenshot_path}")
-        //                 }
+                        // ! 기존 defect_screenshot 폴더와 파일을 삭제
+                        if (fileExists("${map.cucumber.defect_screenshot_path}")) {
+                            sh("rm -rf ${map.cucumber.defect_screenshot_path}")
+                        }
 
-        //                 // ! 기존 report json 파일을 삭제
-        //                 if (fileExists("${map.cucumber.report_json}")) {
-        //                     sh("rm -rf ${map.cucumber.report_json}")
-        //                 }
+                        // ! 기존 report json 파일을 삭제
+                        if (fileExists("${map.cucumber.report_json}")) {
+                            sh("rm -rf ${map.cucumber.report_json}")
+                        }
 
-        //                 // ! 기존 log_path 파일과 폴더를 삭제
-        //                 if (fileExists("${map.cucumber.log_path}")) {
-        //                     sh("rm -rf ${map.cucumber.log_path}")
-        //                 }
-        //                 try {
-        //                     // ! Run cucumber test command line
-        //                     sh("mvn exec:java -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8 -D exec.mainClass=io.cucumber.core.cli.Main -D exec.args=\"${map.cucumber.feature_path} --glue ${map.cucumber.glue} --plugin json:${map.cucumber.report_json} --plugin progress:${map.cucumber.running_progress} --publish --plugin pretty --plugin html:${map.cucumber.cucumber_html}\"")
-        //                 } catch(error) {
-        //                     println "automation test error ---> : ${error.getMessage()}"
-        //                 }
-        //             }
-        //         }
+                        // ! 기존 log_path 파일과 폴더를 삭제
+                        if (fileExists("${map.cucumber.log_path}")) {
+                            sh("rm -rf ${map.cucumber.log_path}")
+                        }
+                        try {
+                            // ! Run cucumber test command line
+                            sh("mvn exec:java -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8 -D exec.mainClass=io.cucumber.core.cli.Main -D exec.args=\"${map.cucumber.feature_path} --glue ${map.cucumber.glue} --plugin json:${map.cucumber.report_json} --plugin progress:${map.cucumber.running_progress} --publish --plugin pretty --plugin html:${map.cucumber.cucumber_html}\"")
+                        } catch(error) {
+                            println "automation test error ---> : ${error.getMessage()}"
+                        }
+                    }
+                }
 
-        //         dir("${map.current_path}") {
-        //             script {
-        //                 try {
-        //                     // ! 테스트가 끝난 후 appium server kill (원래는 이 stage에서만 실행되는 스크립트이기 때문에 이 stage가 끝나면 저절로 appium server가 꺼지긴 한다만, 불예측성 에러를 방지하기 위해 process 직접 종료)
-        //                     // ! lsof -t -i :PORT 가 의미하는건 해당 포트로 할당된 process를 가져오는것
-        //                     OUTPUT = sh script: "kill \$(lsof -t -i :${APPIUM_PORT})", returnStdout: true
-        //                     echo OUTPUT
+                dir("${map.current_path}") {
+                    script {
+                        try {
+                            // ! 테스트가 끝난 후 appium server kill (원래는 이 stage에서만 실행되는 스크립트이기 때문에 이 stage가 끝나면 저절로 appium server가 꺼지긴 한다만, 불예측성 에러를 방지하기 위해 process 직접 종료)
+                            // ! lsof -t -i :PORT 가 의미하는건 해당 포트로 할당된 process를 가져오는것
+                            OUTPUT = sh script: "kill \$(lsof -t -i :${APPIUM_PORT})", returnStdout: true
+                            echo OUTPUT
 
-        //                     // ! 테스트가 모두 끝나고 생성되는 cucumber.json 파일을 읽어서 map에 저장
-        //                     map.cucumber.result_text = readFile file: map.cucumber.report_json
-        //                 } catch (NoSuchFileException) {
-        //                     throwableException(map, NoSuchFileException)
-        //                 } catch (Exception) {
-        //                     throwableException(map, Exception)
-        //                 }
+                            // ! 테스트가 모두 끝나고 생성되는 cucumber.json 파일을 읽어서 map에 저장
+                            map.cucumber.result_text = readFile file: map.cucumber.report_json
+                        } catch (NoSuchFileException) {
+                            throwableException(map, NoSuchFileException)
+                        } catch (Exception) {
+                            throwableException(map, Exception)
+                        }
 
-        //                 // ! Test가 정상 수행되어서 report 파일이 생성되었다면 적어도 사이즈가 0은 될 수 없음
-        //                 if (map.cucumber.result_text == null || map.cucumber.result_text.isEmpty()) {
-        //                     jenkinsException(map, "Reports file was created, but file is empty")
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+                        // ! Test가 정상 수행되어서 report 파일이 생성되었다면 적어도 사이즈가 0은 될 수 없음
+                        if (map.cucumber.result_text == null || map.cucumber.result_text.isEmpty()) {
+                            jenkinsException(map, "Reports file was created, but file is empty")
+                        }
+                    }
+                }
+            }
+        }
 
-        // stage("Analysis test result") {
-        //     agent { label "${map.current_node}" }
-        //     steps {
-        //         dir("${map.current_path}") {
-        //             script {
-        //                 println "✅✅✅✅ Analysis test result ✅✅✅✅"
+        stage("Analysis test result") {
+            agent { label "${map.current_node}" }
+            steps {
+                dir("${map.current_path}") {
+                    script {
+                        println "✅✅✅✅ Analysis test result ✅✅✅✅"
                         
-        //                 try {
-        //                     // ! 테스트 후 생성된 cucumber.json 파일을 가져온다.
-        //                     map.cucumber.result_json = readFile file: map.cucumber.report_json
-        //                     // ! 가져온 cucumber.json 파일을 parsing
-        //                     def results = new JsonSlurper().parseText(map.cucumber.result_json as String)
+                        try {
+                            // ! 테스트 후 생성된 cucumber.json 파일을 가져온다.
+                            map.cucumber.result_json = readFile file: map.cucumber.report_json
+                            // ! 가져온 cucumber.json 파일을 parsing
+                            def results = new JsonSlurper().parseText(map.cucumber.result_json as String)
 
-        //                     def clearResult = results[0].elements
-        //                     def isPassed = true
-        //                     def currentIssue = null
-        //                     def scenarioName = null
+                            def clearResult = results[0].elements
+                            def isPassed = true
+                            def currentIssue = null
+                            def scenarioName = null
 
-        //                     for (def result in clearResult) {
-        //                         // ! description에는 반드시 해당 jira issue key값이 들어있어야 한다. 상위 stage에서 이 부분을 처리해줬음
-        //                         if (result.description == "") {
-        //                             jenkinsException(map, "Scenario description (Issue key) required.")
-        //                         }
-        //                         currentIssue = result.description.trim()
+                            for (def result in clearResult) {
+                                // ! description에는 반드시 해당 jira issue key값이 들어있어야 한다. 상위 stage에서 이 부분을 처리해줬음
+                                if (result.description == "") {
+                                    jenkinsException(map, "Scenario description (Issue key) required.")
+                                }
+                                currentIssue = result.description.trim()
 
-        //                         // ! 테스트 Scenario의 name
-        //                         scenarioName = result.name.trim().replaceAll(" ", "_")
-        //                         println "defect screenshot name --> ${scenarioName}"
+                                // ! 테스트 Scenario의 name
+                                scenarioName = result.name.trim().replaceAll(" ", "_")
+                                println "defect screenshot name --> ${scenarioName}"
 
-        //                         // ! 테스트 Scenario의 before, after step의 result
-        //                         def before = result.before[0].result
-        //                         def after = result.after[0].result
+                                // ! 테스트 Scenario의 before, after step의 result
+                                def before = result.before[0].result
+                                def after = result.after[0].result
 
-        //                         if (!before.status.contains("passed")) {
-        //                             map.cucumber.error_message = before.error_message
-        //                             isPassed = false
-        //                             // ! create defect issue 
-        //                             def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
-        //                                 "Defect of test '${currentIssue}'",
-        //                                 map.cucumber.error_message,
-        //                                 map.jira.defect_issuetype)
-        //                                 )
+                                if (!before.status.contains("passed")) {
+                                    map.cucumber.error_message = before.error_message
+                                    isPassed = false
+                                    // ! create defect issue 
+                                    def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
+                                        "Defect of test '${currentIssue}'",
+                                        map.cucumber.error_message,
+                                        map.jira.defect_issuetype)
+                                        )
                                     
-        //                             // ! 추후 stage에서 screenshot을 attach할 때 필요한 정보들 
-        //                             map.cucumber.defect_info.put(res.key, scenarioName)
+                                    // ! 추후 stage에서 screenshot을 attach할 때 필요한 정보들 
+                                    map.cucumber.defect_info.put(res.key, scenarioName)
 
-        //                             // ! Plan/Run linked with Bug
-        //                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
-        //                             // ! Bug linked with Test case
-        //                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
-        //                             // ! continue 처리를 하는 이유는 passed가 아닌 이후부터는 모든 step이 skipped 상태이기 때문에 문제가 발생한 스텝에서의 에러를 defect로 생성하고 다음 scenario로 넘어가면 됨
-        //                             continue
-        //                         }
+                                    // ! Plan/Run linked with Bug
+                                    linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
+                                    // ! Bug linked with Test case
+                                    linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
+                                    // ! continue 처리를 하는 이유는 passed가 아닌 이후부터는 모든 step이 skipped 상태이기 때문에 문제가 발생한 스텝에서의 에러를 defect로 생성하고 다음 scenario로 넘어가면 됨
+                                    continue
+                                }
 
-        //                         if (!after.status.contains("passed")) {
-        //                             map.cucumber.error_message = after.error_message
-        //                             isPassed = false
-        //                             def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
-        //                                 "Defect of test '${currentIssue}'",
-        //                                 map.cucumber.error_message,
-        //                                 map.jira.defect_issuetype)
-        //                                 )
-        //                             // ! Plan/Run linked with Bug
-        //                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
-        //                             // ! Bug linked with Test case
-        //                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
-        //                             continue
-        //                         }
+                                if (!after.status.contains("passed")) {
+                                    map.cucumber.error_message = after.error_message
+                                    isPassed = false
+                                    def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
+                                        "Defect of test '${currentIssue}'",
+                                        map.cucumber.error_message,
+                                        map.jira.defect_issuetype)
+                                        )
+                                    // ! Plan/Run linked with Bug
+                                    linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
+                                    // ! Bug linked with Test case
+                                    linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
+                                    continue
+                                }
                                 
-        //                         for (def step in result.steps) {
-        //                             def eachStep = step.result
-        //                             if (!eachStep.status.contains("passed")) {
-        //                                 map.cucumber.error_message = eachStep.error_message
-        //                                 if (map.cucumber.error_message == null || map.cucumber.error_message == "") {
-        //                                     // ! undefined은 error_message가 없어서 직접 처리해줘야 함. undefined은 해당 step이 implement되지 않았을 때 발생함
-        //                                     if (eachStep.status.contains("undefined")) {
-        //                                         isPassed = false
-        //                                         def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
-        //                                         "Defect of test '${currentIssue}'",
-        //                                         "step '${step.name}'의 step definition이 정의되지 않았습니다.", map.jira.defect_issuetype)
-        //                                         )
+                                for (def step in result.steps) {
+                                    def eachStep = step.result
+                                    if (!eachStep.status.contains("passed")) {
+                                        map.cucumber.error_message = eachStep.error_message
+                                        if (map.cucumber.error_message == null || map.cucumber.error_message == "") {
+                                            // ! undefined은 error_message가 없어서 직접 처리해줘야 함. undefined은 해당 step이 implement되지 않았을 때 발생함
+                                            if (eachStep.status.contains("undefined")) {
+                                                isPassed = false
+                                                def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
+                                                "Defect of test '${currentIssue}'",
+                                                "step '${step.name}'의 step definition이 정의되지 않았습니다.", map.jira.defect_issuetype)
+                                                )
 
-        //                                         // ! Plan/Run linked with Bug
-        //                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
-        //                                         // ! Bug linked with Test case
-        //                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
-        //                                         // ! 역시 마찬가지로 passed가 아닌 무언가 (undefined, failed) 생긴 이후 step은 다 skipped임 그래서 이 for문을 빠져나가면 됨
-        //                                         break
-        //                                     } else {
-        //                                         // ! error_message가 없고 undefined가 아니면 skipped인 경우밖에 없음 근데 skipped인 경우가 loop에서 나오면 안됨 (skipped가 나오기전에 빠져나오는 로직을 실행하기 때문에)
-        //                                         jenkinsException(map, "error message is empty")
-        //                                     }
-        //                                 }
-        //                                 isPassed = false
-        //                                 def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
-        //                                 "Defect of test '${currentIssue}'",
-        //                                 map.cucumber.error_message,
-        //                                 map.jira.defect_issuetype)
-        //                                 )
+                                                // ! Plan/Run linked with Bug
+                                                linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
+                                                // ! Bug linked with Test case
+                                                linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
+                                                // ! 역시 마찬가지로 passed가 아닌 무언가 (undefined, failed) 생긴 이후 step은 다 skipped임 그래서 이 for문을 빠져나가면 됨
+                                                break
+                                            } else {
+                                                // ! error_message가 없고 undefined가 아니면 skipped인 경우밖에 없음 근데 skipped인 경우가 loop에서 나오면 안됨 (skipped가 나오기전에 빠져나오는 로직을 실행하기 때문에)
+                                                jenkinsException(map, "error message is empty")
+                                            }
+                                        }
+                                        isPassed = false
+                                        def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
+                                        "Defect of test '${currentIssue}'",
+                                        map.cucumber.error_message,
+                                        map.jira.defect_issuetype)
+                                        )
                                         
-        //                                 // ! 추후 stage에서 screenshot을 attach할 때 필요한 정보들 
-        //                                 map.cucumber.defect_info.put(res.key, scenarioName)
+                                        // ! 추후 stage에서 screenshot을 attach할 때 필요한 정보들 
+                                        map.cucumber.defect_info.put(res.key, scenarioName)
 
-        //                                 // ! Plan/Run linked with Bug
-        //                                 linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
-        //                                 // ! Bug linked with Test case
-        //                                 linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
-        //                                 break
-        //                             }
-        //                         }
-        //                     }
+                                        // ! Plan/Run linked with Bug
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
+                                        // ! Bug linked with Test case
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
+                                        break
+                                    }
+                                }
+                            }
                             
-        //                     if (isPassed) {
-        //                         // ! 이 statement가 실행되는 경우는 모든 step이 다 passed 될 경우임 그래서 test plan/run issue를 finish 상태로 변경
-        //                         transitionIssue(map.jira.base_url, map.jira.auth, transitionPayload(map.jira.success_transition), JIRA_ISSUE_KEY)
-        //                     } else {
-        //                         // ! 이 statement가 실행되는 경우는 모든 시나리오 중 하나라도 passed가 이루어지지 않은 시나리오가 있다면 실행됨 test plan/run issue를 test fail 상태로 변경
-        //                         transitionIssue(map.jira.base_url, map.jira.auth, transitionPayload(map.jira.fail_transition), JIRA_ISSUE_KEY)
-        //                     }
-        //                 } catch (error) {
-        //                     throwableException(map, error)
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+                            if (isPassed) {
+                                // ! 이 statement가 실행되는 경우는 모든 step이 다 passed 될 경우임 그래서 test plan/run issue를 finish 상태로 변경
+                                transitionIssue(map.jira.base_url, map.jira.auth, transitionPayload(map.jira.success_transition), JIRA_ISSUE_KEY)
+                            } else {
+                                // ! 이 statement가 실행되는 경우는 모든 시나리오 중 하나라도 passed가 이루어지지 않은 시나리오가 있다면 실행됨 test plan/run issue를 test fail 상태로 변경
+                                transitionIssue(map.jira.base_url, map.jira.auth, transitionPayload(map.jira.fail_transition), JIRA_ISSUE_KEY)
+                            }
+                        } catch (error) {
+                            throwableException(map, error)
+                        }
+                    }
+                }
+            }
+        }
 
         // stage("Attached defect screenshots") {
         //     agent { label "${map.current_node}" }
@@ -559,7 +559,21 @@ def createBugPayload (String projectKey, String summary, String description, Str
         "fields": [
             "project": ["key": "${projectKey}"],
             "summary": "${summary}",
-            "description": "${description}",
+            "description": [
+                "type": "doc",
+                "version": 1,
+                "content": [
+                    [
+                        "type": "paragraph",
+                        "content": [
+                            [
+                                "text": "${description}",
+                                "type": "text"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
             "issuetype": ["name": "${issuetype}"],
             "priority": ["name": "Highest"]
         ]
@@ -569,7 +583,7 @@ def createBugPayload (String projectKey, String summary, String description, Str
 
 // JIRA API 
 def createIssue(String baseUrl, String auth, String payload) {
-    def url = "${baseUrl}/rest/api/2/issue"
+    def url = "${baseUrl}/rest/api/3/issue"
     def conn = new URL(url).openConnection()
     conn.setRequestMethod("POST")
     conn.setDoOutput(true)
@@ -602,7 +616,7 @@ def createLinkPayload(String planIssueKey, String createdDefectKey, String linkT
 
 // JIRA API
 def linkIssue(String baseUrl, String auth, String payload) {
-    def url = "${baseUrl}/rest/api/2/issueLink"
+    def url = "${baseUrl}/rest/api/3/issueLink"
     def conn = new URL(url).openConnection()
     conn.setRequestMethod("POST")
     conn.setDoOutput(true)
