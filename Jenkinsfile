@@ -451,16 +451,14 @@ pipeline {
             steps {
                 script {
                     def remote = [:]
-                    remote.name = 'pms.tbell.kro.kr'
-                    remote.host = 'pms.tbell.kro.kr'
-                    remote.port = 2222
+                    remote.name = "${jenkins_server}"
+                    remote.host = "${jenkins_server}"
+                    remote.port = jenkins_server_port as int
                     remote.user = TBELL_BACKUP_AUTH_USR
                     remote.password = TBELL_BACKUP_AUTH_PSW
                     remote.allowAnyHosts = true
 
                     println "job name: ${JOB_NAME}"
-                    println "jenkins server: ${jenkins_server}"
-                    println "jenkins server port: ${jenkins_server_port as int}"
 
                     sshCommand remote: remote, command: "cd /var/lib; ls -al"
                 }
