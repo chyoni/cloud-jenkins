@@ -451,8 +451,8 @@ pipeline {
             steps {
                 script {
                     def remote = [:]
-                    remote.name = 'tbell.backup'
-                    remote.host = 'tbell.backup.server'
+                    remote.name = 'pms.tbell.kro.kr'
+                    remote.host = 'pms.tbell.kro.kr'
                     remote.port = 2222
                     remote.user = TBELL_BACKUP_AUTH_USR
                     remote.password = TBELL_BACKUP_AUTH_PSW
