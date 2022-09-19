@@ -13,7 +13,7 @@ pipeline {
     }
     environment {
         // ! Jenkins Web에서 설정한 값
-        TBELL_JIRA_CWCHOI = credentials('tbell-jira-cwchoiit')
+        TBELL_JIRA_CWCHOI = credentials('jira-cloud-cwchoi')
         // ! Jira trigger를 통해 자동으로 받는 값
         JIRA_ISSUE_KEY = "${JIRA_PLAN_ISSUE_KEY}"
         
@@ -41,23 +41,25 @@ pipeline {
             }
         }
 
-        // stage("Get test plan") {
-        //     steps {
-        //         script {
-        //             println "✅✅✅✅ Get test plan ✅✅✅✅"
-        //             // ! Jira Pipeline steps 라는 plugin 기능 중 jiraGetIssue라는 API를 사용 
-        //             map.issue = jiraGetIssue idOrKey: JIRA_ISSUE_KEY, site: map.jira.site_name
+        stage("Get test plan") {
+            steps {
+                script {
+                    println "✅✅✅✅ Get test plan ✅✅✅✅"
+                    // ! Jira Pipeline steps 라는 plugin 기능 중 jiraGetIssue라는 API를 사용 
+                    map.issue = jiraGetIssue idOrKey: JIRA_ISSUE_KEY, site: map.jira.site_name
 
-        //             if (map.issue.data.fields.components.name && map.issue.data.fields.components.name[0]) {
-        //                 map.cucumber.feature_name = map.issue.data.fields.components.name[0]
-        //             }
-        //             // ! trigger 시킨 이슈타입이 Test Plan 아니라면 에러
-        //             if (map.issue.data.fields.issuetype.name != map.const.test_plan_issuetype) {
-        //                 jenkinsException(map, "This issue does not matched 'Test Plan/Run' issue type.")
-        //             }
-        //         }
-        //     }
-        // } 
+                    println "issue -> : ${map.issue}"
+
+                    if (map.issue.data.fields.components.name && map.issue.data.fields.components.name[0]) {
+                        map.cucumber.feature_name = map.issue.data.fields.components.name[0]
+                    }
+                    // ! trigger 시킨 이슈타입이 Test Plan 아니라면 에러
+                    if (map.issue.data.fields.issuetype.name != map.const.test_plan_issuetype) {
+                        jenkinsException(map, "This issue does not matched 'Test Plan/Run' issue type.")
+                    }
+                }
+            }
+        } 
         
         // stage("Set environments / Get testcases") {
         //     steps {
@@ -494,12 +496,12 @@ def init(def map) {
 
     map.git = [:]
     map.git.branch = "master"
-    map.git.url = "https://github.com/ThinkbigAutomation/thinkbig-appium.git"
+    map.git.url = "https://github.com/chyoni/cloud-jenkins.git"
 
     map.jira = [:]
-    map.jira.site_name = "TBELL_JIRA"
-    map.jira.base_url = "http://pms.tbell.kro.kr/jira"
-    map.jira.project_key = "TT"
+    map.jira.site_name = "JIRA_CWCHOI_CLOUD"
+    map.jira.base_url = "https://cwchoiit.atlassian.net/jira"
+    map.jira.project_key = "TC"
     map.jira.defect_issuetype = "Bug"
     // ! scenario field on tests issue
     map.jira.scenario_field = "customfield_11205"
