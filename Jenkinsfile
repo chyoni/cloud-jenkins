@@ -66,7 +66,7 @@ pipeline {
                 script {
                     println "✅✅✅✅ Set environments / Get testcases ✅✅✅✅"
                     // ! Jira의 custom field 중 Tablet info 라는 select field의 현재 설정된 값을 가져온다.
-                    def test_env = map.issue.data.fields[map.const.test_env].value[0]
+                    def test_env = map.issue.data.fields[map.const.test_env].value
                     println "Test environment (slave) --->" + test_env
 
                     // ! init method에서 지정해놓은 agents_ref 중 현재 설정된 Tablet info 필드 값과 일치하는 값이 있는지 확인 후 path, slave 설정 
