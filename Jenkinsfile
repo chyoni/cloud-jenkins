@@ -16,6 +16,7 @@ pipeline {
         TBELL_JIRA_CWCHOI = credentials('jira-cloud-cwchoi')
         // ! Jira trigger를 통해 자동으로 받는 값
         JIRA_ISSUE_KEY = "${JIRA_PLAN_ISSUE_KEY}"
+        TBELL_BACKUP_AUTH = credentials('backup_server_tbell')
         
         APPIUM_ADDR = "0.0.0.0"
         APPIUM_PORT = "4723"
@@ -444,6 +445,15 @@ pipeline {
                     }
                 }
             } 
+        }
+
+        stage("Zip file transfer") {
+            steps {
+                script {
+                    def remote = [:]
+                    remote.name = 
+                }
+            }
         }
     }
 
