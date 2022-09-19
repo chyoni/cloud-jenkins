@@ -102,51 +102,49 @@ pipeline {
                     for (def issue in result.issues) {
                         map.testcases.put(issue.key, issue.fields[map.jira.scenario_field].content[0].content[0].text)
                     }
-
-                    println "testcases: ${map.testcases}"
                 }
             }
         }
 
-        // stage("Download testcases on slave") {
-        //     // ! agent는 지정한 slave node의 label
-        //     agent {
-        //         label "${map.current_node}"
-        //     }
-        //     steps {
-        //         // ! dir로 특정 path를 지정하면 지정한 slave의 지정한 path에서 작업을 한다는 의미
-        //         dir("${map.current_path}") {
-        //             script {
-        //                 println "✅✅✅✅ Download testcases on slave ✅✅✅✅"
-        //                 println "testcases count --> : ${map.testcases.size()}"
+        stage("Download testcases on slave") {
+            // ! agent는 지정한 slave node의 label
+            agent {
+                label "${map.current_node}"
+            }
+            steps {
+                // ! dir로 특정 path를 지정하면 지정한 slave의 지정한 path에서 작업을 한다는 의미
+                dir("${map.current_path}") {
+                    script {
+                        println "✅✅✅✅ Download testcases on slave ✅✅✅✅"
+                        println "testcases count --> : ${map.testcases.size()}"
 
-        //                 // ! map.testcases에 담긴 각 시나리오를 하나의 feature 파일로 변환 하는 과정에서 
-        //                 // ! 첫 줄의 Feature Name을 지정
-        //                 def feature = (map.cucumber.feature_name != null) ? "Feature: ${map.cucumber.feature_name}\n\n\n" : "Feature: Default\n\n\n"
+                        // ! map.testcases에 담긴 각 시나리오를 하나의 feature 파일로 변환 하는 과정에서 
+                        // ! 첫 줄의 Feature Name을 지정
+                        def feature = (map.cucumber.feature_name != null) ? "Feature: ${map.cucumber.feature_name}\n\n\n" : "Feature: Default\n\n\n"
                         
 
-        //                 // ! JIRA에 올라가 있는 scenario를 가져와서 description으로 해당 JIRA issue key를 붙여준다.
-        //                 // ! issue key를 붙여주는 이유는 해당 시나리오가 JIRA에 어떤 issue와 매핑되는지 알기 위함
-        //                 map.testcases.each { key, value ->
-        //                     def addedDescription = value.replaceFirst("\r\n", ("\r\n" + key + "\n\n"))
-        //                     feature += addedDescription
-        //                     feature += "\n\n"
-        //                 }
+                        // ! JIRA에 올라가 있는 scenario를 가져와서 description으로 해당 JIRA issue key를 붙여준다.
+                        // ! issue key를 붙여주는 이유는 해당 시나리오가 JIRA에 어떤 issue와 매핑되는지 알기 위함
+                        map.testcases.each { key, value ->
+                            def addedDescription = value.replaceFirst("\r\n", ("\r\n" + key + "\n\n"))
+                            feature += addedDescription
+                            feature += "\n\n"
+                        }
                         
-        //                 // ! fileExists 라는 Jenkins Pipeline에서 제공하는 method
-        //                 if (fileExists("${map.cucumber.feature_path}")) {
-        //                     // ! 해당 파일/폴더 있다면 지움, 왜냐하면 테스트가 매번 달라질 것이기 때문에 기존 테스트를 위해 만들어진 테스트를 지우기 위함
-        //                     sh script: """ rm -rf "${map.cucumber.feature_path}" """, returnStdout: false
-        //                 }
-        //                 // ! 해당 폴더가 없으면 만듬
-        //                 sh script: """ mkdir "${map.cucumber.feature_path}" """, returnStdout: false
+                        // ! fileExists 라는 Jenkins Pipeline에서 제공하는 method
+                        if (fileExists("${map.cucumber.feature_path}")) {
+                            // ! 해당 파일/폴더 있다면 지움, 왜냐하면 테스트가 매번 달라질 것이기 때문에 기존 테스트를 위해 만들어진 테스트를 지우기 위함
+                            sh script: """ rm -rf "${map.cucumber.feature_path}" """, returnStdout: false
+                        }
+                        // ! 해당 폴더가 없으면 만듬
+                        sh script: """ mkdir "${map.cucumber.feature_path}" """, returnStdout: false
 
-        //                 // ! slave의 directory에서 auto.feature라는 파일을 만들고 그 파일에 jira에서 가져온 모든 시나리오를 집어넣음
-        //                 writeFile file: "./a_features/auto.feature", text: feature
-        //             }
-        //         }
-        //     }
-        // }
+                        // ! slave의 directory에서 auto.feature라는 파일을 만들고 그 파일에 jira에서 가져온 모든 시나리오를 집어넣음
+                        writeFile file: "./a_features/auto.feature", text: feature
+                    }
+                }
+            }
+        }
 
         // stage("Checkout slave's local branch") {
         //     agent {
