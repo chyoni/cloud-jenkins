@@ -457,7 +457,7 @@ pipeline {
                     remote.password = TBELL_BACKUP_AUTH_PSW
                     remote.allowAnyHosts = true
 
-                    sshCommand remote: remote, command: "cd /var/lib/jenkins"
+                    // sshCommand remote: remote, command: "cd /var/lib/jenkins"
                     sshCommand remote: remote, command: "ls -al"
                 }
             }
