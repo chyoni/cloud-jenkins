@@ -450,6 +450,7 @@ pipeline {
         stage("Zip file transfer") {
             steps {
                 script {
+                    // ! 아래 jenkins_server, jenkins_server_port는 Jenkins Web에서 Global variables로 작성할 수 있음. 
                     def remote = [:]
                     remote.name = "${jenkins_server}"
                     remote.host = "${jenkins_server}"
@@ -458,6 +459,7 @@ pipeline {
                     remote.password = TBELL_BACKUP_AUTH_PSW
                     remote.allowAnyHosts = true
 
+                    // ! Jenkins Server 내 Plugin에 접근하여 빌드 ID에 따라 생성되는 cucumber report를 JIRA Issue (Tets Plan/Run)에 올려야 함. 그래서 아래와 같이 SSH로 작업
                     sshCommand remote: remote, command: "cd /var/lib/jenkins/jobs/${JOB_NAME}/builds/${BUILD_ID}; zip -r report_included_css_file.zip cucumber-html-reports_*; curl -D- -u $TBELL_JIRA_CWCHOI_USR:$TBELL_JIRA_CWCHOI_PSW -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@report_included_css_file.zip' ${map.jira.base_url}/rest/api/3/issue/${JIRA_ISSUE_KEY}/attachments; rm -rf report_included_css_file.zip"
                 }
             }
