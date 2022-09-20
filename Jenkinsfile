@@ -451,6 +451,7 @@ pipeline {
             steps {
                 script {
                     // ! 아래 jenkins_server, jenkins_server_port는 Jenkins Web에서 Global variables로 작성할 수 있음. 
+                    // ! remote map은 SSH Steps 이라는 Jenkins plugin을 사용하는 방식임 아래처럼 작성해줘야함
                     def remote = [:]
                     remote.name = "${jenkins_server}"
                     remote.host = "${jenkins_server}"
@@ -525,6 +526,7 @@ def init(def map) {
     map.git.url = "https://github.com/chyoni/cloud-jenkins.git"
 
     map.jira = [:]
+    // ! Jira Steps Plugin을 위해 Configure System에서 설정한 값
     map.jira.site_name = "JIRA_CWCHOI_CLOUD"
     map.jira.base_url = "https://cwchoiit.atlassian.net"
     map.jira.project_key = "TC"
