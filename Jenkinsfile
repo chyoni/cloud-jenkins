@@ -585,7 +585,10 @@ def createBugPayload (String projectKey, String summary, String description, Str
                 "version": 1,
                 "content": [
                     [
-                        "type": "paragraph",
+                        "type": "codeBlock",
+                        "attrs": [
+                            "language": "java"
+                        ],
                         "content": [
                             [
                                 "text": "${description}",
