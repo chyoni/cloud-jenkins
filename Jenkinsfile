@@ -27,20 +27,20 @@ pipeline {
         BUILD_ID = "${BUILD_ID}"
     }
     stages {
-        // stage("Init") {
-        //     steps {
-        //         script {
-        //             init(map)
-        //             println "✅✅✅✅ Init Pipeline ✅✅✅✅"
-        //             println "Plan issue key: ${JIRA_ISSUE_KEY}"
-        //             // ! Jenkins Credential을 Username/Password로 지정하면 _USR, _PSW가 변수로 자동 등록
-        //             // ! 그리고 한가지 유의할 점은 위 JIRA_ISSUE_KEY 와 달리 아래는 작은 따옴표로 {} 없이 사용하고 있는데, 이 이유는 Groovy interpolation으로 민감한 정보는 전달하면 안됨
-        //             // ! 전달 할 때 host OS에서 arguments value를 그대로 받기 때문에 보안에 취약함 -> Jenkins 공식 문서
-        //             map.jira.auth_user = '$TBELL_JIRA_CWCHOI_USR:$TBELL_JIRA_CWCHOI_PSW'
-        //             map.jira.auth = "Basic " + "${TBELL_JIRA_CWCHOI_USR}:${TBELL_JIRA_CWCHOI_PSW}".bytes.encodeBase64()
-        //         }
-        //     }
-        // }
+        stage("Init") {
+            steps {
+                script {
+                    init(map)
+                    println "✅✅✅✅ Init Pipeline ✅✅✅✅"
+                    println "Plan issue key: ${JIRA_ISSUE_KEY}"
+                    // ! Jenkins Credential을 Username/Password로 지정하면 _USR, _PSW가 변수로 자동 등록
+                    // ! 그리고 한가지 유의할 점은 위 JIRA_ISSUE_KEY 와 달리 아래는 작은 따옴표로 {} 없이 사용하고 있는데, 이 이유는 Groovy interpolation으로 민감한 정보는 전달하면 안됨
+                    // ! 전달 할 때 host OS에서 arguments value를 그대로 받기 때문에 보안에 취약함 -> Jenkins 공식 문서
+                    map.jira.auth_user = '$TBELL_JIRA_CWCHOI_USR:$TBELL_JIRA_CWCHOI_PSW'
+                    map.jira.auth = "Basic " + "${TBELL_JIRA_CWCHOI_USR}:${TBELL_JIRA_CWCHOI_PSW}".bytes.encodeBase64()
+                }
+            }
+        }
 
         // stage("Get test plan") {
         //     steps {
@@ -458,7 +458,7 @@ pipeline {
                     remote.password = TBELL_BACKUP_AUTH_PSW
                     remote.allowAnyHosts = true
 
-                    sshCommand remote: remote, command: "cd /var/lib/jenkins/jobs/${JOB_NAME}/builds/16; zip -r report_included_css_file.zip cucumber-html-reports_*; curl -D- -u " + "$TBELL_JIRA_CWCHOI_USR:$TBELL_JIRA_CWCHOI_PSW" + " -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@report_included_css_file.zip' https://cwchoiit.atlassian.net/rest/api/3/issue/${JIRA_ISSUE_KEY}/attachments; rm -rf report_included_css_file.zip"
+                    sshCommand remote: remote, command: "cd /var/lib/jenkins/jobs/${JOB_NAME}/builds/16; zip -r report_included_css_file.zip cucumber-html-reports_*; curl -D- -u " + "${map.jira.auth}" + " -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@report_included_css_file.zip' https://cwchoiit.atlassian.net/rest/api/3/issue/${JIRA_ISSUE_KEY}/attachments; rm -rf report_included_css_file.zip"
                     //sshCommand remote: remote, command: "cd /var/lib/jenkins/jobs/${JOB_NAME}/builds/${BUILD_ID}; zip -r report_included_css_file.zip cucumber-html-reports_*; curl -D- -u $TBELL_JIRA_CWCHOI_USR:$TBELL_JIRA_CWCHOI_PSW -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@report_included_css_file.zip' ${map.jira.base_url}/rest/api/3/issue/${JIRA_ISSUE_KEY}/attachments; rm -rf report_included_css_file.zip"
                 }
             }
