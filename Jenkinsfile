@@ -9,7 +9,7 @@ pipeline {
     // ! Jenkins Web에서 지정한 tools
     tools {
         maven 'cwchoiit_m2'
-        jdk 'cwchoiit_jdk11'
+        // jdk 'cwchoiit_jdk11'
     }
     environment {
         // ! Jenkins Web에서 설정한 값
