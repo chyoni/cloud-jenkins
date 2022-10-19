@@ -33,7 +33,6 @@ pipeline {
                     init(map)
                     println "✅✅✅✅ Init Pipeline ✅✅✅✅"
                     println "Plan issue key: ${JIRA_ISSUE_KEY}"
-                    sh("echo $ANDROID_HOME")
                     // ! Jenkins Credential을 Username/Password로 지정하면 _USR, _PSW가 변수로 자동 등록
                     // ! 그리고 한가지 유의할 점은 위 JIRA_ISSUE_KEY 와 달리 아래는 작은 따옴표로 {} 없이 사용하고 있는데, 이 이유는 Groovy interpolation으로 민감한 정보는 전달하면 안됨
                     // ! 전달 할 때 host OS에서 arguments value를 그대로 받기 때문에 보안에 취약함 -> Jenkins 공식 문서
@@ -120,6 +119,7 @@ pipeline {
                         println "✅✅✅✅ Download testcases on slave ✅✅✅✅"
                         println "testcases count --> : ${map.testcases.size()}"
 
+                        sh("echo $ANDROID_HOME")
                         // ! map.testcases에 담긴 각 시나리오를 하나의 feature 파일로 변환 하는 과정에서 
                         // ! 첫 줄의 Feature Name을 지정
                         def feature = (map.cucumber.feature_name != null) ? "Feature: ${map.cucumber.feature_name}\n\n\n" : "Feature: Default\n\n\n"
