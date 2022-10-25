@@ -1,5 +1,6 @@
 package stepdefinitions;
 
+import com.beust.ah.A;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.touch.offset.PointOption;
 import io.cucumber.java.en.Then;
@@ -13,6 +14,7 @@ import utils.Constant;
 import utils.Utils;
 
 import java.security.InvalidParameterException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
@@ -74,7 +76,10 @@ public class PlayerViewStepDefine {
                 return;
             }
 
-            if (alertMsg.isDisplayed() && alertMsg.getText().contains("읽던 페이지를 이어서 볼까요?")) {
+            if (alertMsg.getText().equals("이 책은 세로로 보시면 좋아요.\n" +
+                    "기기를 세로로 돌려서 보세요.")) {
+                AndroidManager.getElementById(Constant.안내팝업확인_id).click();
+            } else if (alertMsg.isDisplayed() && alertMsg.getText().contains("읽던 페이지를 이어서 볼까요?")) {
                 switch (yesOrNo) {
                     case "Yes":
                         AndroidManager.getElementById(Constant.안내팝업확인_id).click();
@@ -116,6 +121,29 @@ public class PlayerViewStepDefine {
         try {
             log.info("더보기 내 사전 버튼 클릭");
             AndroidManager.getElementById(Constant.사전_id).click();
+            TimeUnit.SECONDS.sleep(3);
+
+            try {
+                WebElement helpLayout2 = AndroidManager.getElementByIdUntilDuration(Constant.helpViewLayout_id, 3);
+                if (helpLayout2.isDisplayed()) AndroidManager.getElementById(Constant.helpViewXBtn_id).click();
+            } catch (Exception ignored) {}
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    /**
+     * 사전 버튼 클릭 코치마크 미확인
+     */
+    @When("사전 버튼 클릭 코치마크 미확인")
+    public void clickDictionaryBtnWithoutCoachMark() {
+        try {
+            log.info("사전 버튼 클릭 코치마크 미확인");
+            AndroidManager.getElementById(Constant.사전_id).click();
+            TimeUnit.SECONDS.sleep(1);
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -422,6 +450,8 @@ public class PlayerViewStepDefine {
     @When("녹음 시작 버튼 클릭")
     public void clickStartRecordingBtn() {
         try {
+            log.info("코치마크 노출 시 닫기");
+            checkFirstHelpLayoutScreen();
             log.info("녹음 시작 버튼 클릭");
             AndroidManager.getElementById(Constant.녹음시작_id).click();
         } catch (NoSuchElementException e) {
@@ -632,6 +662,37 @@ public class PlayerViewStepDefine {
         try {
             log.info("뷰어 종료");
             AndroidManager.getElementById(Constant.viewerClose_id).click();
+            try{
+                WebElement element = AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/radio_rating_emotion01");
+                if (element.isDisplayed()) {
+                    element.click();
+                    element = AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/button_rating_ok");
+                    element.click();
+                    TimeUnit.SECONDS.sleep(2);
+                    element = AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/btn_nextbook_close");
+                    element.click();
+                }
+            }catch (Exception e){
+                return;
+            }
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    /**
+     * 짝꿍책 선택 레이아웃 노출 시 닫기
+     */
+    @When("짝꿍책 선택 레이아웃 노출 시 닫기")
+    public void closeNextBookLayoutIfDisplayed() {
+        try {
+            log.info("짝꿍책 선택 레이아웃 노출 시 닫기");
+            try {
+                AndroidManager.getElementByIdUntilDuration(Constant.pairBookXBtn_id, 3).click();
+            } catch (Exception ignored) {}
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -1042,6 +1103,9 @@ public class PlayerViewStepDefine {
         try {
             log.info("이미 감상문이 존재할 경우 노출되는 화면 확인");
             WebElement alreadyText = AndroidManager.getElementByXpath(Constant.writeFeelingAlreadyExist_xPath);
+            if (alreadyText.getText().equals("도서 당 작성 감상문 수는\n" +
+                    "3개 입니다.")) return;
+
             WebElement feelingThumbnail = AndroidManager.getElementById(Constant.firstWriteFeelingThumbnail_id);
             if (alreadyText.isDisplayed() && alreadyText.getText().contains("감상문을 작성하세요") && feelingThumbnail.isDisplayed()) return;
             fail("이미 감상문이 존재할 경우 보여지는 화면이 노출되지 않았습니다.");
@@ -1143,34 +1207,94 @@ public class PlayerViewStepDefine {
                     this.clickOKOnCommonPopup();
                     TimeUnit.SECONDS.sleep(2);
                 }
-                WebElement element = AndroidManager.getElementByXpath(Constant.writeFeelingAlreadyExist_xPath);
-                String isFull = element.getText();
+                try {
+                    WebElement element = AndroidManager.getElementByXpath(Constant.writeFeelingAlreadyExist_xPath);
+                    String isFull = element.getText();
 
-                if (isFull.equals("감상문을 작성하세요")) {
+                    if (isFull.equals("감상문을 작성하세요")) {
+                        Outer:
+                        for (int j = 0; j < 3; j++) {
+                            WebElement date = AndroidManager.getElementById("com.wjthinkbig.mbookdiaryactivitytool:id/tvThumb"+ j);
+                            if (date.getText().isEmpty()) {
+                                AndroidManager.getElementById("com.wjthinkbig.mbookdiaryactivitytool:id/ivReport" + j).click();
+                                TimeUnit.SECONDS.sleep(2);
+                                for (int k = 1; k < 5; k++) {
+                                    String parentXPath = "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.support.v7.widget.RecyclerView/android.widget.LinearLayout["+k+"]/android.widget.LinearLayout";
+                                    String childXPath =  parentXPath + "/android.widget.TextView";
 
-                    WebElement date = AndroidManager.getElementById("com.wjthinkbig.mbookdiaryactivitytool:id/tvThumb"+ i);
-                    if (date.getText().isEmpty()) {
-                        AndroidManager.getElementById("com.wjthinkbig.mbookdiaryactivitytool:id/ivReport" + i).click();
+                                    WebElement parentElement = AndroidManager.getElementByXpath(parentXPath);
+                                    WebElement childElement = AndroidManager.getElementByXpath(childXPath);
 
-                        TimeUnit.SECONDS.sleep(5);
-                        AndroidManager.getElementByXpath(Constant.randomDrawingTemplate_xPath).click();
+                                    if (childElement.getText().equals("내 맘대로 그리기")) {
+                                        parentElement.click();
 
-                        TimeUnit.SECONDS.sleep(2);
-                        AndroidManager.getElementById(Constant.selectTemplateOK_id).click();
+                                        TimeUnit.SECONDS.sleep(2);
+                                        AndroidManager.getElementById(Constant.selectTemplateOK_id).click();
 
-                        TimeUnit.SECONDS.sleep(2);
-                        AndroidManager.getElementById(Constant.drawingMode_id).click();
+                                        TimeUnit.SECONDS.sleep(2);
+                                        AndroidManager.getElementById(Constant.drawingMode_id).click();
 
-                        TimeUnit.SECONDS.sleep(2);
-                        Utils.dragScreenCenterToA(AndroidManager.getDriver(), (Utils.getScreenCenterX() + 156), 100);
+                                        TimeUnit.SECONDS.sleep(2);
+                                        Utils.dragScreenCenterToA(AndroidManager.getDriver(), (Utils.getScreenCenterX() + 156), 100);
 
-                        TimeUnit.SECONDS.sleep(4);
-                        AndroidManager.getElementById(Constant.drawingSave_id).click();
-                        TimeUnit.SECONDS.sleep(5);
+                                        TimeUnit.SECONDS.sleep(4);
+                                        AndroidManager.getElementById(Constant.drawingSave_id).click();
+                                        TimeUnit.SECONDS.sleep(5);
+
+                                        break Outer;
+                                    }
+                                }
+                            }
+                        }
+                    } else if (isFull.contains("도서 당 작성 감상문 수는\n" +
+                            "3개 입니다.")) {
+                        break;
                     }
-                } else if (isFull.contains("도서 당 작성 감상문 수는\n" +
-                        "3개 입니다.")) {
-                    break;
+                } catch (Exception e) {
+                    for (int k = 1; k < 5; k++) {
+                        String parentXPath = "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.support.v7.widget.RecyclerView/android.widget.LinearLayout["+k+"]/android.widget.LinearLayout";
+                        String childXPath =  parentXPath + "/android.widget.TextView";
+
+                        WebElement parentElement = AndroidManager.getElementByXpath(parentXPath);
+                        WebElement childElement = AndroidManager.getElementByXpath(childXPath);
+
+                        if (childElement.getText().equals("내 맘대로 그리기")) {
+                            parentElement.click();
+
+                            TimeUnit.SECONDS.sleep(2);
+                            AndroidManager.getElementById(Constant.selectTemplateOK_id).click();
+
+                            TimeUnit.SECONDS.sleep(2);
+                            AndroidManager.getElementById(Constant.drawingMode_id).click();
+
+                            TimeUnit.SECONDS.sleep(2);
+                            Utils.dragScreenCenterToA(AndroidManager.getDriver(), (Utils.getScreenCenterX() + 156), 100);
+
+                            TimeUnit.SECONDS.sleep(4);
+                            AndroidManager.getElementById(Constant.drawingSave_id).click();
+                            TimeUnit.SECONDS.sleep(5);
+
+                            break;
+                        }
+                    }
+
+//                    AndroidManager.getElementById("com.wjthinkbig.mbookdiaryactivitytool:id/ivReport" + i).click();
+//
+//                    TimeUnit.SECONDS.sleep(5);
+//                    AndroidManager.getElementByXpath(Constant.randomDrawingTemplate_xPath).click();
+//
+//                    TimeUnit.SECONDS.sleep(2);
+//                    AndroidManager.getElementById(Constant.selectTemplateOK_id).click();
+//
+//                    TimeUnit.SECONDS.sleep(2);
+//                    AndroidManager.getElementById(Constant.drawingMode_id).click();
+//
+//                    TimeUnit.SECONDS.sleep(2);
+//                    Utils.dragScreenCenterToA(AndroidManager.getDriver(), (Utils.getScreenCenterX() + 156), 100);
+//
+//                    TimeUnit.SECONDS.sleep(4);
+//                    AndroidManager.getElementById(Constant.drawingSave_id).click();
+//                    TimeUnit.SECONDS.sleep(5);
                 }
                 i++;
             }

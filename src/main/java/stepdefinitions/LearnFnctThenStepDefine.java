@@ -131,7 +131,7 @@ public class LearnFnctThenStepDefine {
                 //알림 팝업 확인
                 boolean isDisplayedContents =
                         AndroidManager.getElementById("com.wjthinkbig.mlauncher2:id/layoutDialog").isDisplayed() &&
-                        AndroidManager.getElementById("com.wjthinkbig.mlauncher2:id/txtMessage").getText().equals("투게더 회원이 아닙니다.");
+                                AndroidManager.getElementById("com.wjthinkbig.mlauncher2:id/txtMessage").getText().equals("투게더 회원이 아닙니다.");
                 assertTrue(isDisplayedContents);
 
                 //알림 팝업 닫기
@@ -159,8 +159,8 @@ public class LearnFnctThenStepDefine {
             //타이틀 및 탭 구성 확인
             boolean isDisplayedContents =
                     AndroidManager.getElementById("com.wjthinkbig.mlauncher2:id/txtTitle").getText().equals("상담하기") &&
-                            AndroidManager.getElementByXpath("//android.view.View[@content-desc=\"웅진씽크빅\"]/android.widget.TextView").isDisplayed() &&
-                            AndroidManager.getElementByXpath("//android.view.View[@content-desc=\"웅진북클럽\"]/android.widget.TextView").isDisplayed();
+                            AndroidManager.getElementByXpath("//android.view.View[@text=\"웅진씽크빅\"]").isDisplayed() &&
+                            AndroidManager.getElementByXpath("//android.view.View[@text=\"웅진북클럽\"]").isDisplayed();
             assertTrue(isDisplayedContents);
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
@@ -178,6 +178,8 @@ public class LearnFnctThenStepDefine {
         try {
             log.info("학습 체험판 {} 실행 확인", subject);
 
+            //if(subject.equals("ARScience") || subject.equals("영어") || subject.equals("한자")) TimeUnit.SECONDS.sleep(10);
+
             //학습 체험판 과목별 실행 확인
             boolean isDisplayedContents = false;
             String imageName = "";
@@ -185,32 +187,33 @@ public class LearnFnctThenStepDefine {
             switch (subject) {
                 case "AI수학":
                     isDisplayedContents =
-                            AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/container_study_overlay").isDisplayed() &&
-                            AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/btn_study_lock_button").isDisplayed();
+                            AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/exo_ad_overlay").isDisplayed() &&
+                                    AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/exo_content_frame").isDisplayed() &&
+                                    AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/exo_overlay").isDisplayed();
                     break;
                 case "AI학습매니저":
                     isDisplayedContents =
                             AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/exo_ad_overlay").isDisplayed() &&
-                            AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/exo_content_frame").isDisplayed() &&
-                            AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/exo_overlay").isDisplayed();
+                                    AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/exo_content_frame").isDisplayed() &&
+                                    AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/exo_overlay").isDisplayed();
                     break;
                 case "AI수학체험":
                     isDisplayedContents =
-                            AndroidManager.getElementByXpath("//android.view.View[@content-desc=\"AI수학 소개\"]").isDisplayed() &&
-                            AndroidManager.getElementByXpath("//android.view.View[@content-desc=\"AI수학 체험 저학년\"]").isDisplayed() &&
-                            AndroidManager.getElementByXpath("//android.view.View[@content-desc=\"AI수학 체험 고학년\"]").isDisplayed();
+                            AndroidManager.getElementByXpath("//android.view.View[@text=\"AI수학 소개\"]").isDisplayed() &&
+                                    AndroidManager.getElementByXpath("//android.view.View[@text=\"AI수학 체험 저학년\"]").isDisplayed() &&
+                                    AndroidManager.getElementByXpath("//android.view.View[@text=\"AI수학 체험 고학년\"]").isDisplayed();
                     break;
                 case "AI책읽기":
                     isDisplayedContents =
-                            AndroidManager.getElementByXpath("//android.view.View[@content-desc=\"AI책읽기 소개\"]").isDisplayed() &&
-                            AndroidManager.getElementByXpath("//android.view.View[@content-desc=\"AI책읽기 체험\"]").isDisplayed() &&
-                            AndroidManager.getElementByXpath("//android.view.View[@content-desc=\"월간 분석지\"]").isDisplayed();
+                            AndroidManager.getElementByXpath("//android.view.View[@text=\"AI책읽기 소개\"]").isDisplayed() &&
+                                    AndroidManager.getElementByXpath("//android.view.View[@text=\"AI책읽기 체험\"]").isDisplayed() &&
+                                    AndroidManager.getElementByXpath("//android.view.View[@text=\"월간 분석지\"]").isDisplayed();
                     break;
                 case "국어":
                     imageName = Utils.takeScreenShot();
                     result = Utils.imageToText(imageName);
                     log.info("image to text: {}", result);
-                    isDisplayedContents = result.contains("투 대이 스 터 디");
+                    isDisplayedContents = result.contains("스 터 디");
                     break;
                 case "생각토론":
                     imageName = Utils.takeScreenShot();
@@ -225,8 +228,6 @@ public class LearnFnctThenStepDefine {
                     isDisplayedContents = result.contains("수 학");
                     break;
                 case "ARScience":
-                    TimeUnit.SECONDS.sleep(15);
-
                     imageName = Utils.takeScreenShot();
                     result = Utils.imageToText(imageName);
                     log.info("image to text: {}", result);
@@ -242,7 +243,7 @@ public class LearnFnctThenStepDefine {
                     imageName = Utils.takeScreenShot();
                     result = Utils.imageToText(imageName, "eng");
                     log.info("image to text: {}", result);
-                    isDisplayedContents = result.contains("Start");
+                    isDisplayedContents = result.contains("Letters");
                     break;
                 case "한자":
                     imageName = Utils.takeScreenShot();
@@ -254,25 +255,25 @@ public class LearnFnctThenStepDefine {
                     imageName = Utils.takeScreenShot();
                     result = Utils.imageToText(imageName);
                     log.info("image to text: {}", result);
-                    isDisplayedContents = result.contains("한 글 자 학 습");
+                    isDisplayedContents = result.contains("가 , 나 익 히 기");
                     break;
                 case "수학깨치기":
                     imageName = Utils.takeScreenShot();
                     result = Utils.imageToText(imageName);
                     log.info("image to text: {}", result);
-                    isDisplayedContents = result.contains("고 아 페 은");
+                    isDisplayedContents = result.contains("0 아이");
                     break;
                 case "유아국어":
                     imageName = Utils.takeScreenShot();
                     result = Utils.imageToText(imageName);
                     log.info("image to text: {}", result);
-                    isDisplayedContents = result.contains("놀2");
+                    isDisplayedContents = result.contains("4호");
                     break;
                 case "유아수학":
                     imageName = Utils.takeScreenShot();
                     result = Utils.imageToText(imageName);
                     log.info("image to text: {}", result);
-                    isDisplayedContents = result.contains("놀 이");
+                    isDisplayedContents = result.contains("놀이");
                     break;
                 case "유아영어":
                     imageName = Utils.takeScreenShot();
@@ -284,7 +285,7 @@ public class LearnFnctThenStepDefine {
                     imageName = Utils.takeScreenShot();
                     result = Utils.imageToText(imageName);
                     log.info("image to text: {}", result);
-                    isDisplayedContents = result.contains("1 시 간 의 기 적");
+                    isDisplayedContents = result.contains("투 게 더");
                     break;
             }
 

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
+import java.util.List;
 
 /**
  * AndroidDriver, WebDriverWait 과 같이 드라이버 관련된 클래스,
@@ -120,7 +121,6 @@ public class AndroidManager {
         return getWait().until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.id(id))).get(index);
     }
 
-
     /**
      * 원하는 element가 swipe 가능한 화면 내 존재할 때 text가 있으면 해당 텍스트를 통해 element를 return
      * @param text element text
@@ -133,6 +133,7 @@ public class AndroidManager {
                         "new UiScrollable(new UiSelector().scrollable(true))" + ".scrollIntoView(new UiSelector().text(\""+text+"\"))"
                 ));
     }
+
     /**
     * Parameter로 전달한 Text를 가지고 있는 Element를 얻거나 그 Element까지 Scroll한다. 여기서 Scrollable한 List는 Horizontal List이어야 하고, 해당 List의 Resource-id를 전달해야한다.
     * @param resourceId scrollable list의 resource_id
@@ -158,5 +159,31 @@ public class AndroidManager {
         return getWait().until(ExpectedConditions.presenceOfElementLocated(By.xpath(xPath))).getText();
     }
 
+    /**
+     * 특정 영역에서 원하는 element가 swipe 가능한 화면 내 존재할 때 포함되는 text가 있으면 해당 텍스트를 통해 element를 return
+     * @param resourceId swipe 하고자 하는 특정 영역의 resource id(예: .*:id/recyclerView)
+     * @param text element text
+     * @return WebElement
+     * */
+    public static WebElement getElementByTextContainsAfterSwipe(String resourceId, String text) {
+        log.info("text --> {}", "new UiScrollable(new UiSelector().resourceIdMatches(\""+resourceId+"\").scrollable(true))" + ".scrollIntoView(new UiSelector().textContains(\""+text+"\"))");
+        return getDriver().findElement(
+                AppiumBy.androidUIAutomator(
+                        "new UiScrollable(new UiSelector().resourceIdMatches(\""+resourceId+"\").scrollable(true))" + ".scrollIntoView(new UiSelector().textContains(\""+text+"\"))"
+                ));
+    }
 
+    /**
+     * 특정 부모 element 하위에 동일 아이디의 여러 Element가 있는 경우, parentId, childId, index 번호를 통해 원하는 Element를 가져온다.
+     * @param parentId elements id of parent
+     * @param childId elements id of child
+     * @param index element index that you want to get
+     * */
+    public static WebElement getElementsByIdsAndIndex(String parentId, String childId, int index) {
+        WebElement parent = getDriver().findElement(By.id(parentId));
+        List<WebElement> elementList = parent.findElements(By.id(childId));
+
+        if(elementList.size() > 1) return elementList.get(index);
+        else return parent.findElement(By.id(childId));
+    }
 }

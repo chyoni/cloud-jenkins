@@ -17,6 +17,8 @@ import utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,8 +55,13 @@ public class Hook {
             File file = AndroidManager.getDriver().getScreenshotAs(OutputType.FILE);
             String scrShotDir = "defect_screenshots";
             new File(scrShotDir).mkdirs();
-            String dest = cleanFileName + ".png";
 
+            Path currentDirectoryPath = Paths.get("").toAbsolutePath();
+            String currentPath = currentDirectoryPath.toString();
+
+            if (!currentPath.equals("/Users/choichiwon/Jenkins/ThinkBig")) return;
+
+            String dest = cleanFileName + ".png";
             try {
                 FileUtils.copyFile(file, new File(scrShotDir + "/" + dest));
                 log.info("screenshot name: {}", dest);

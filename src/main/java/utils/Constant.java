@@ -198,4 +198,6 @@ public class Constant {
     public static final String enDictionarySearchGoBtn_id = "com.wjthinkbig.mepubviewer2:id/BT_dictionary_en_call";
     public static final String cartoonHelpLayoutCloseBtn_id = "com.wjthinkbig.mepubviewer2:id/button_help_close_by_cartoon";
     public static final String enHelpLayoutXBtn_id = "com.wjthinkbig.mepubviewer2:id/button_help_en_close";
+    public static final String backOnSearchScreen_id = "com.wjthinkbig.dictionary:id/close";
+    public static final String orderDateBtn_id = "com.wjthinkbig.mlauncher2:id/read_date_order";
 }

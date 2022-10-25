@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import utils.AndroidManager;
 import utils.Utils;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.junit.Assert.*;
 
 public class LearnFnctWhenStepDefine {
@@ -39,7 +41,7 @@ public class LearnFnctWhenStepDefine {
         try {
             log.info("전체 커리큘럼 보기 버튼 클릭");
 
-            String xpath = "//android.view.View[@content-desc=\" 전체 커리큘럼 보기\"]";
+            String xpath = "//android.view.View[@text=\" 전체 커리큘럼 보기\"]";
             AndroidManager.getElementByXpath(xpath).click();
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
@@ -137,9 +139,13 @@ public class LearnFnctWhenStepDefine {
 
             //화면 최하단으로 이동
             Utils.swipeScreen(Utils.Direction.UP);
+            TimeUnit.SECONDS.sleep(1);
             Utils.swipeScreen(Utils.Direction.UP);
+            TimeUnit.SECONDS.sleep(1);
             Utils.swipeScreen(Utils.Direction.UP);
+            TimeUnit.SECONDS.sleep(1);
             Utils.swipeScreen(Utils.Direction.UP);
+            TimeUnit.SECONDS.sleep(1);
             AndroidManager.getElementById("com.wjthinkbig.mlauncher2:id/btnCounsel").click();
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
@@ -159,9 +165,13 @@ public class LearnFnctWhenStepDefine {
 
             //화면 최하단으로 이동
             Utils.swipeScreen(Utils.Direction.UP);
+            TimeUnit.SECONDS.sleep(1);
             Utils.swipeScreen(Utils.Direction.UP);
+            TimeUnit.SECONDS.sleep(1);
             Utils.swipeScreen(Utils.Direction.UP);
+            TimeUnit.SECONDS.sleep(1);
             Utils.swipeScreen(Utils.Direction.UP);
+            TimeUnit.SECONDS.sleep(1);
 
             //학습 체험판 과목 리스트 영역 위치(과목 리스트 초기화하거나 Next Step으로 Swipe할 때 사용)
             WebElement source = AndroidManager.getElementById("com.wjthinkbig.mlauncher2:id/rvTrialList");
@@ -278,7 +288,7 @@ public class LearnFnctWhenStepDefine {
     @When("학습 체험판 {string} 첫단계 선택")
     public void 학습체험판첫단계선택(String subject) {
         try {
-            log.info("학습 체험판 과목 첫단계 선택");
+            log.info("학습 체험판 {} 과목 첫단계 선택", subject);
             AndroidManager.getElementsByIdAndIndex("com.wjthinkbig.mlauncher2:id/txtStage", 0).click();
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
@@ -288,216 +298,645 @@ public class LearnFnctWhenStepDefine {
         }
     }
 
+    /**
+     * 학습 과목 클릭
+     */
     @When("{string} 과목 클릭")
     public void 학습과목클릭(String subject) {
-        switch (subject) {
-            case "한글깨치기":
-                //스크롤해서 해당 아이템 클릭
-                //com.wjthinkbig.mlauncher2:id/imgOrder_baby 클릭
-                break;
-            case "유아수학":
-                //com.wjthinkbig.mlauncher2:id/rvStudyList 의 index=4 아이템
-                //xpath :  /hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[5]
-                break;
-            case "개정수학":
-                //com.wjthinkbig.mlauncher2:id/rvStudyList 의 index=5 아이템
-                //xpath : /hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[6]
-                break;
-            case "국어":
-                //com.wjthinkbig.mlauncher2:id/rvStudyList index=1 또는 xpath
-                //xpath : /hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[2]
-                break;
-            case "사회":
-                //com.wjthinkbig.mlauncher2:id/rvStudyList index=4 또는 xpath
-                //xpath : /hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[5]
-                break;
-            case "과학":
-                //com.wjthinkbig.mlauncher2:id/rvStudyList index=5 또는 xpath
-                //xpath : /hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[6]
-                break;
-            case "Vacabulary Master":
-                //com.wjthinkbig.mlauncher2:id/rvStudyList index=6 또는 xpath
-                //xpath : /hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[3]
-                break;
-            case "생각토론":
-                //com.wjthinkbig.mlauncher2:id/rvStudyList index=2 또는 xpath
-                //xpath : /hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[3]
-                break;
-            case "테마논술":
-                //com.wjthinkbig.mlauncher2:id/rvStudyList index=3 또는 xpath
-                //xpath : /hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[4]
-                break;
-            case "수학마스터":
-                //화면 스크롤 필요
-                //com.wjthinkbig.mlauncher2:id/rvStudyList index=5 또는 xpath
-                //xpath : /hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[6]
-                break;
-        }
+        try {
+            log.info("학습 과목 {} 클릭", subject);
 
+            Dimension dims = AndroidManager.getDriver().manage().window().getSize();
+            int pointX = dims.width / 2;
+            int pointY = dims.height / 2;
+
+            String rId = "";
+            int index = 0;
+            switch (subject) {
+                case "국어":
+                    index = 0;
+                    break;
+                case "생각토론":
+                    index = 1;
+                    break;
+                case "테마논술":
+                    index = 2;
+                    break;
+                case "개정수학":
+                    index = 3;
+                    break;
+                case "초고수학":
+                    index = 4;
+                    break;
+                case "서술형수학":
+                    index = 5;
+                    break;
+                case "사회":
+                    //해당 과목 위치로 swipe 처리
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.dragSourceToTarget(pointX, pointY, pointX, pointY+450);
+                    TimeUnit.SECONDS.sleep(1);
+
+                    index = 0;
+                    break;
+                case "과학":
+                    //해당 과목 위치로 swipe 처리
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.dragSourceToTarget(pointX, pointY, pointX, pointY+450);
+                    TimeUnit.SECONDS.sleep(1);
+
+                    index = 1;
+                    break;
+                case "Vacabulary Master":
+                    //해당 과목 위치로 swipe 처리
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.dragSourceToTarget(pointX, pointY, pointX, pointY+450);
+                    TimeUnit.SECONDS.sleep(1);
+
+                    index = 2;
+                    break;
+                case "Reading Master":
+                    //해당 과목 위치로 swipe 처리
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.dragSourceToTarget(pointX, pointY, pointX, pointY+450);
+                    TimeUnit.SECONDS.sleep(1);
+
+                    index = 3;
+                    break;
+                case "수학마스터":
+                    //해당 과목 위치로 swipe 처리
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+
+                    index = 0;
+                    break;
+                case "무한수강":
+                    //해당 과목 위치로 swipe 처리
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+
+                    index = 1;
+                    break;
+                case "한글깨치기":
+                    //화면 최하단으로 이동
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.swipeScreen(Utils.Direction.UP);
+                    TimeUnit.SECONDS.sleep(1);
+
+                    rId = "com.wjthinkbig.mlauncher2:id/imgOrder_baby";
+                    break;
+            }
+
+            if (!rId.equals("")) {
+                AndroidManager.getElementById("com.wjthinkbig.mlauncher2:id/imgOrder_baby").click();
+            } else {
+                String parentId = "com.wjthinkbig.mlauncher2:id/rvStudyList";
+                String childId = "com.wjthinkbig.mlauncher2:id/imgOrder_elem";
+                AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+            }
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
+    /**
+     * 책이랑 글자랑 영역 콘텐츠 클릭
+     */
     @When("책이랑 글자랑 영역 콘텐츠 클릭")
     public void 책이랑글자랑영역콘텐츠클릭() {
-        //책이랑 글자랑 콘텐츠 클릭
-        //com.wjthinkbig.babyintg:id/todaybfragment_framely_5
-    }
-
-    @When("{string} 학습단계 확인 버튼 클릭")
-    public void 과목별학습단계확인버튼클릭(String subject) {
-        switch (subject) {
-            case "한글깨치기":
-                //학습단계 확장 토글 버튼 클릭
-                //com.wjthinkbig.babyintg:id/stage_img_toggle
-                break;
-            case "유아수학":
-                //com.wjthinkbig.integratedquration.main:id/txt_current_ho
-                break;
-            case "개정수학":
-                //com.wjthinkbig.school1.main:id/stage_rel_btn_ho
-                break;
-            case "국어":
-                //com.wjthinkbig.school1.main:id/stage_rel_btn_ho
-                break;
-            case "사회":
-                //com.wjthinkbig.integratedquration.main:id/txt_current_ho
-                break;
-            case "과학":
-                //com.wjthinkbig.integratedquration.main:id/txt_current_ho
-                break;
-            case "Vacabulary Master":
-                //com.wjthinkbig.integratedquration.main:id/txt_current_ho
-                break;
-            case "생각토론":
-                //com.wjthinkbig.integratedquration.main:id/txt_current_ho
-                break;
-            case "테마논술":
-                //com.wjthinkbig.integratedquration.main:id/txt_current_ho
-                break;
-            case "수학마스터":
-                //com.wjthinkbig.integratedquration.main:id/txt_current_ho
-                break;
+        try {
+            log.info("책이랑 글자랑 영역 콘텐츠 클릭");
+            AndroidManager.getElementById("com.wjthinkbig.babyintg:id/todaybfragment_framely_5").click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
         }
     }
 
+    /**
+     * 과목별 학습단계 확인 버튼 클릭
+     */
+    @When("{string} 학습단계 확인 버튼 클릭")
+    public void 과목별학습단계확인버튼클릭(String subject) {
+        try {
+            log.info("과목별 학습단계 확인 버튼 클릭, {}", subject);
+
+            String rId = "";
+            switch (subject) {
+                case "한글깨치기":
+                    rId = "com.wjthinkbig.babyintg:id/stage_rel_btn_ho";
+                    break;
+                case "개정수학":
+                    rId = "com.wjthinkbig.integratedquration.main:id/txt_current_ho";
+                    break;
+                case "초고수학":
+                    rId = "com.wjthinkbig.school1.main:id/stage_rel_btn_ho";
+                    break;
+                case "국어":
+                    rId = "com.wjthinkbig.school1.main:id/stage_rel_btn_ho";
+                    break;
+                case "사회":
+                    rId = "com.wjthinkbig.integratedquration.main:id/txt_current_ho";
+                    break;
+                case "과학":
+                    rId = "com.wjthinkbig.integratedquration.main:id/txt_current_ho";
+                    break;
+                case "Vacabulary Master":
+                    rId = "com.wjthinkbig.integratedquration.main:id/txt_current_ho";
+                    break;
+                case "생각토론":
+                    rId = "com.wjthinkbig.integratedquration.main:id/txt_current_ho";
+                    break;
+                case "테마논술":
+                    rId = "com.wjthinkbig.integratedquration.main:id/txt_current_ho";
+                    break;
+                case "수학마스터":
+                    rId = "com.wjthinkbig.integratedquration.main:id/txt_current_ho";
+                    break;
+            }
+
+            AndroidManager.getElementById(rId).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    /**
+     * 본학습단계 클릭
+     */
     @When("본학습단계 클릭")
     public void 본학습단계클릭() {
-        String xpath = "/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.ListView[1]/android.widget.LinearLayout[2]";
+        try {
+            log.info("본학습단계 클릭");
+
+            String parentId = "com.wjthinkbig.babyintg:id/backinfopop_lv_stagelist";
+            String childId = "com.wjthinkbig.babyintg:id/stage_list1_linearly";
+            int index = 1;
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
-    @When("{string} 단계 클릭")
-    public void 단계클릭(String step) {
-        //해당 step이 보여질때까지 스크롤 필요
-        //resource-id : com.wjthinkbig.babyintg:id/stage_list2_txt_honame, text : step
+    /**
+     * 세부 단계 클릭
+     */
+    @When("{string} 과목 {string} 단계 클릭")
+    public void 단계클릭(String subject, String step) {
+        try {
+            log.info("{} 과목 {} 단계 클릭", subject, step);
+
+            //step명에 " "가 붙어 있어서 변환 처리
+            String tStep = "";
+            if(subject.equals("개정수학") || subject.equals("사회") || subject.equals("과학") || subject.equals("Vacabulary Master")
+                    || subject.equals("생각토론") || subject.equals("테마논술")) {
+                for (int i = 0; i < step.length(); i++) {
+                    tStep += step.substring(i, i + 1) + " ";
+                }
+                step = tStep;
+            }
+
+            AndroidManager.getElementByTextContainsAfterSwipe(".*:id/backinfopop_lv_holist", step).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
-
-    @When("유아수학 D단계 클릭")
-    public void 유아수학D단계클릭() {
-        //com.wjthinkbig.integratedquration.main:id/backinfopop_lv_stagelist 의 index=0 또는 아래 xpath 이용
-        //xpath : /hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.ListView[1]/android.widget.LinearLayout[1]
+    /**
+     * 투데이 스터디1 영역 콘텐츠 클릭
+     */
+    @When("투데이 스터디1 영역 콘텐츠 클릭")
+    public void 투데이스터디1영역콘텐츠클릭() {
+        try {
+            log.info("투데이 스터디1 영역 콘텐츠 클릭");
+            AndroidManager.getElementById("com.wjthinkbig.school1.main:id/todaybfragment_framely_2").click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
-    @When("개정수학 G단계 클릭")
-    public void 개정수학G단계클릭() {
-        //com.wjthinkbig.integratedquration.main:id/backinfopop_lv_stagelist 의 index=0 또는 아래 xpath 이용
-        //xpath : /hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.ListView[1]/android.widget.LinearLayout[1]
+    /**
+     * 개정수학 D단계 클릭
+     */
+    @When("개정수학 D단계 클릭")
+    public void 개정수학D단계클릭() {
+        try {
+            log.info("개정수학 D단계 클릭");
+
+            String parentId = "com.wjthinkbig.integratedquration.main:id/backinfopop_lv_stagelist";
+            String childId = "com.wjthinkbig.integratedquration.main:id/stage_list1_linearly";
+            int index = 0;
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
+    /**
+     * 개념이 쏙쏙1 영역 콘텐츠 클릭
+     */
     @When("개념이 쏙쏙1 영역 콘텐츠 클릭")
     public void 개념이쏙쏙영역콘텐츠클릭() {
-        //xpath: /hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.RelativeLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.ExpandableListView/android.widget.LinearLayout[1]/android.widget.GridView/android.widget.RelativeLayout[1]
+        try {
+            log.info("개념이 쏙쏙1 영역 콘텐츠 클릭");
+
+            //콘텐츠 이미지가 backView인 경우, 콘텐츠 한번 더 클릭하여 frontView로 만든 후 실행하기
+            try {
+                WebElement backView = AndroidManager.getElementById("com.wjthinkbig.integratedquration.main:id/back_thumb");
+
+                if (backView.isDisplayed()) {
+                    log.info("콘텐츠 이미지가 backView인 경우, 한번 클릭하여 frontView가 보여지도록 처리");
+                    backView.click();
+                    TimeUnit.SECONDS.sleep(1);
+                }
+            } catch (Exception e) {
+            }
+
+            String parentId = "com.wjthinkbig.integratedquration.main:id/gridExpandable";
+            String childId = "com.wjthinkbig.integratedquration.main:id/ib_module";
+            int index = 0;
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
+    /**
+     * 초고수학 G단계 클릭
+     */
+    @When("초고수학 G단계 클릭")
+    public void 초고수학G단계클릭() {
+        try {
+            log.info("초고수학 G단계 클릭");
 
+            String parentId = "com.wjthinkbig.school1.main:id/backinfopop_lv_stagelist";
+            String childId = "com.wjthinkbig.school1.main:id/stage_list1_linearly";
+            int index = 0;
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    /**
+     * 국어 F단계 클릭
+     */
     @When("국어 F단계 클릭")
     public void 국어F단계클릭() {
-        //xpath : /hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.ListView[1]/android.widget.LinearLayout[1]
+        try {
+            log.info("국어 F단계 클릭");
+
+            String parentId = "com.wjthinkbig.school1.main:id/backinfopop_lv_stagelist";
+            String childId = "com.wjthinkbig.school1.main:id/stage_list1_linearly";
+            int index = 0;
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
-    @When("읽기 도입 영역 콘텐츠 클릭")
-    public void 읽기도입영역콘텐츠클릭() {
-        //com.wjthinkbig.school1.main:id/todaybfragment_framely_2
-    }
-
-
+    /**
+     * 사회 E단계 클릭
+     */
     @When("사회 E단계 클릭")
     public void 사회E단계클릭() {
-        //com.wjthinkbig.integratedquration.main:id/backinfopop_lv_stagelist index=1 또는 아래 이용
-        //com.wjthinkbig.integratedquration.main:id/stage_list1_txt_stagename 의 text = E단계 또는 xpath 이용
-        //xpath : /hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.ListView[1]/android.widget.LinearLayout[2]
+        try {
+            log.info("사회 E단계 클릭");
+
+            String parentId = "com.wjthinkbig.integratedquration.main:id/backinfopop_lv_stagelist";
+            String childId = "com.wjthinkbig.integratedquration.main:id/stage_list1_linearly";
+            int index = 1;
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
+    /**
+     * 개념쏙속1 영역 콘텐츠 클릭
+     */
     @When("개념쏙속1 영역 콘텐츠 클릭")
     public void 개념쏙속1영역콘텐츠클릭() {
-        //xpath : /hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.RelativeLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.ExpandableListView/android.widget.LinearLayout[1]/android.widget.GridView/android.widget.RelativeLayout[1]
+        try {
+            log.info("개념쏙속1 영역 콘텐츠 클릭");
+
+            //콘텐츠 이미지가 backView인 경우, 콘텐츠 한번 더 클릭하여 frontView로 만든 후 실행하기
+            try {
+                WebElement backView = AndroidManager.getElementById("com.wjthinkbig.integratedquration.main:id/back_thumb");
+
+                if (backView.isDisplayed()) {
+                    log.info("콘텐츠 이미지가 backView인 경우, 한번 클릭하여 frontView가 보여지도록 처리");
+                    backView.click();
+                    TimeUnit.SECONDS.sleep(1);
+                }
+            } catch (Exception e) {
+            }
+
+            String parentId = "com.wjthinkbig.integratedquration.main:id/gridExpandable";
+            String childId = "com.wjthinkbig.integratedquration.main:id/ib_module";
+            int index = 0;
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
-
+    /**
+     * 과학 E단계 클릭
+     */
     @When("과학 E단계 클릭")
     public void 과학E단계클릭() {
-        //com.wjthinkbig.integratedquration.main:id/backinfopop_lv_stagelist index=0 또는 아래 이용
-        //com.wjthinkbig.integratedquration.main:id/stage_list1_txt_stagename 의 text = E단계 또는 xpath 이용
-        //xpath : /hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.ListView[1]/android.widget.LinearLayout[1]
+        try {
+            log.info("과학 E단계 클릭");
+
+            String parentId = "com.wjthinkbig.integratedquration.main:id/backinfopop_lv_stagelist";
+            String childId = "com.wjthinkbig.integratedquration.main:id/stage_list1_linearly";
+            int index = 0;
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
-
+    /**
+     * Vacabulary Master 2단계 클릭
+     */
     @When("Vacabulary Master 2단계 클릭")
     public void vacabularyMaster2단계클릭() {
-        //com.wjthinkbig.integratedquration.main:id/backinfopop_lv_stagelist index=1 또는 아래 이용
-        //com.wjthinkbig.integratedquration.main:id/stage_list1_txt_stagename 의 text = 2단계 또는 xpath 이용
-        //xpath : /hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.ListView[1]/android.widget.LinearLayout[2]
+        try {
+            log.info("Vacabulary Master 2단계 클릭");
+
+            String parentId = "com.wjthinkbig.integratedquration.main:id/backinfopop_lv_stagelist";
+            String childId = "com.wjthinkbig.integratedquration.main:id/stage_list1_linearly";
+            int index = 1;
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
+    /**
+     * Learn - Chant 영역 콘텐츠 클릭
+     */
     @When("Chant 영역 콘텐츠 클릭")
     public void chant영역콘텐츠클릭() {
-        //xpath : /hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.RelativeLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.ExpandableListView/android.widget.LinearLayout[1]/android.widget.GridView/android.widget.RelativeLayout[2]
+        try {
+            log.info("Learn - Chant 영역 콘텐츠 클릭");
+
+            //콘텐츠 이미지가 backView인 경우, 콘텐츠 한번 더 클릭하여 frontView로 만든 후 실행하기
+            try {
+                WebElement backView = AndroidManager.getElementById("com.wjthinkbig.integratedquration.main:id/back_thumb");
+
+                if (backView.isDisplayed()) {
+                    log.info("콘텐츠 이미지가 backView인 경우, 한번 클릭하여 frontView가 보여지도록 처리");
+                    backView.click();
+                    TimeUnit.SECONDS.sleep(1);
+                }
+            } catch (Exception e) {
+            }
+
+            String parentId = "com.wjthinkbig.integratedquration.main:id/gridExpandable";
+            String childId = "com.wjthinkbig.integratedquration.main:id/ib_module";
+            int index = 1;
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
-
+    /**
+     * 생각토론 C단계 클릭
+     */
     @When("생각토론 C단계 클릭")
     public void 생각토론C단계클릭() {
-        //com.wjthinkbig.integratedquration.main:id/backinfopop_lv_stagelist index=0 또는 아래 이용
-        //com.wjthinkbig.integratedquration.main:id/stage_list1_txt_stagename 의 text = C단계 또는 xpath 이용
-        //xpath : /hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]
+        try {
+            log.info("생각토론 C단계 클릭");
+
+            String parentId = "com.wjthinkbig.integratedquration.main:id/backinfopop_lv_stagelist";
+            String childId = "com.wjthinkbig.integratedquration.main:id/stage_list1_linearly";
+            int index = 0;
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
+    /**
+     * 꼬물꼬물 이야기 극장 영역 콘텐츠 클릭
+     */
     @When("꼬물꼬물 이야기 극장 영역 콘텐츠 클릭")
     public void 꼬물꼬물이야기극장영역콘텐츠클릭() {
-        //xpath : /hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.RelativeLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.ExpandableListView/android.widget.LinearLayout[1]/android.widget.GridView/android.widget.RelativeLayout[5]
+        try {
+            log.info("꼬물꼬물 이야기 극장 영역 콘텐츠 클릭");
+
+            String parentId = "com.wjthinkbig.integratedquration.main:id/gridExpandable";
+            String childId = "com.wjthinkbig.integratedquration.main:id/ib_module";
+            int index = 4;
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
+    /**
+     * 테마논술 C단계 클릭
+     */
     @When("테마논술 C단계 클릭")
     public void 테마논술C단계클릭() {
-        //com.wjthinkbig.integratedquration.main:id/backinfopop_lv_stagelist index=0 또는 아래 이용
-        //com.wjthinkbig.integratedquration.main:id/stage_list1_txt_stagename 의 text = C단계 또는 xpath 이용
-        //xpath : /hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.ListView[1]/android.widget.LinearLayout[1]
+        try {
+            log.info("테마논술 C단계 클릭");
+
+            String parentId = "com.wjthinkbig.integratedquration.main:id/backinfopop_lv_stagelist";
+            String childId = "com.wjthinkbig.integratedquration.main:id/stage_list1_linearly";
+            int index = 0;
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
+    /**
+     * 수학마스터 동영상 강의 영역 콘텐츠 클릭
+     */
     @When("수학마스터 동영상 강의 영역 콘텐츠 클릭")
     public void 수학마스터동영상강의영역콘텐츠클릭() {
-        //com.wjthinkbig.mid.master:id/imgTile1
+        try {
+            log.info("수학마스터 동영상 강의 영역 콘텐츠 클릭");
+            AndroidManager.getElementById("com.wjthinkbig.mid.master:id/imgTile1").click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
+    /**
+     * 수학마스터 학습단계 선택 리스트 클릭
+     */
     @When("수학마스터 학습단계 선택 리스트 클릭")
     public void 수학마스터학습단계선택리스트클릭() {
-        //com.wjthinkbig.mid.master:id/viewUnitBox
+        try {
+            log.info("수학마스터 학습단계 선택 리스트 클릭");
+            AndroidManager.getElementById("com.wjthinkbig.mid.master:id/viewUnitBox").click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
+    /**
+     * 수학마스터 1-1 단계 클릭
+     */
     @When("수학마스터 1-1 단계 클릭")
     public void 수학마스터1단계클릭() {
-        //com.wjthinkbig.mid.master:id/listViewGrade 의 index=0 또는 xpath 이용
-        //xpath : /hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup[2]/android.widget.ListView[1]/android.view.ViewGroup[1]
+        try {
+            log.info("수학마스터 1-1 단계 클릭");
+
+            String parentId = "com.wjthinkbig.mid.master:id/listViewGrade";
+            String childId = "com.wjthinkbig.mid.master:id/tvGrade";
+            int index = 0;
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
+    /**
+     * 수학마스터 {string} 단계 클릭
+     */
     @When("수학마스터 {string} 단계 클릭")
     public void 수학마스터단계클릭(String step) {
-        //com.wjthinkbig.mid.master:id/listViewLecture 의 index=0 또는 아래 id 이용
-        //resource-id : com.wjthinkbig.mid.master:id/tvLecture, text : step
+        try {
+            log.info("수학마스터 {} 단계 클릭", step);
+
+            AndroidManager.getElementByTextContainsAfterSwipe(".*:id/listViewLecture", step).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
     }
 
+    /**
+     * 수학마스터 첫번째 강의 클릭
+     */
     @When("수학마스터 첫번째 강의 클릭")
     public void 수학마스터첫번째강의클릭() {
-        //com.wjthinkbig.mid.master:id/tvNo text=1
-    }
+        try {
+            log.info("수학마스터 첫번째 강의 클릭");
 
+            WebElement parent = AndroidManager.getElementById("com.wjthinkbig.mid.master:id/rvMovie");
+            parent.findElements(By.className("android.view.ViewGroup")).get(0).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
+    }
 }

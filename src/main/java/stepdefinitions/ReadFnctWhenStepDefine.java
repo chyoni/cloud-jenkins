@@ -1,6 +1,5 @@
 package stepdefinitions;
 
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -26,7 +25,7 @@ public class ReadFnctWhenStepDefine {
     @When("독서 - {string} 서브메뉴 클릭")
     public void 독서서브메뉴클릭(String menu) {
         try {
-            log.info("홈 > 독서 > 서브메뉴 클릭");
+            log.info("홈 > 독서 > 서브메뉴 클릭, {}", menu);
 
             //서브메뉴 클릭
             int index = 0;
@@ -72,40 +71,43 @@ public class ReadFnctWhenStepDefine {
     @When("AI맞춤 {string} 콘텐츠 클릭")
     public void AI맞춤콘텐츠클릭(String title) {
         try {
-            log.info("AI맞춤 콘텐츠 클릭");
+            log.info("AI맞춤 콘텐츠 클릭, {}", title);
 
             //화면 최상단으로 이동
             Utils.swipeScreen(Utils.Direction.DOWN);
+            TimeUnit.SECONDS.sleep(1);
             Utils.swipeScreen(Utils.Direction.DOWN);
+            TimeUnit.SECONDS.sleep(1);
             Utils.swipeScreen(Utils.Direction.DOWN);
+            TimeUnit.SECONDS.sleep(1);
             Utils.swipeScreen(Utils.Direction.DOWN);
+            TimeUnit.SECONDS.sleep(1);
 
-            //해당 타이틀의 Y 위치가 1000보다 클 경우 콘텐츠 영역이 가려지기 때문에, title 기준으로 약간 위로 스크롤 처리
-            int titlePositionX = AndroidManager.getElementByTextAfterSwipe(title).getLocation().getX();
-            int titlePositionY = AndroidManager.getElementByTextAfterSwipe(title).getLocation().getY();
-            TimeUnit.SECONDS.sleep(2);
-
-            if (titlePositionY > 1000) {
-                log.info("title Y 위치 = " + titlePositionY);
-
-                Utils.dragSourceToTarget(titlePositionX, titlePositionY, titlePositionX, titlePositionY - 200);
+            //swipe하면서 해당 타이틀을 지나가는 경우 에러 발생함(catch 부분에서 로직 재실행)
+            try {
+                AndroidManager.getElementByTextContainsAfterSwipe(".*:id/recyclerView", title).click();
+            } catch (Exception ie) {
+                TimeUnit.SECONDS.sleep(2);
+                AndroidManager.getElementByTextContainsAfterSwipe(".*:id/recyclerView", title).click();
             }
-
-            if (titlePositionY < 350) {
-                log.info("title Y 위치 = " + titlePositionY);
-
-                Utils.dragSourceToTarget(titlePositionX, titlePositionY, titlePositionX, titlePositionY + 100);
-            }
-
-            //해당 타이틀 클릭
-            AndroidManager.getElementByTextAfterSwipe(title).click();
-            TimeUnit.SECONDS.sleep(2);
 
             //선택한 타이틀 영역에 포함된 첫번째 콘텐츠 클릭()
             log.info("AI맞춤 콘텐츠 클릭 --> //*[@text='" + title + "']/following-sibling::android.widget.FrameLayout");
-            WebElement target = AndroidManager.getDriver()
-                    .findElement(By.xpath("//*[@text='" + title + "']/following-sibling::android.widget.FrameLayout"));
-            target.click();
+
+            //타이틀 기준으로 swipe하므로 최하위 콘텐츠 영역의 경우 에러 발생함(catch 부분에서 위로 swipe 처리 후 로직 재실행)
+            try {
+                WebElement target = AndroidManager.getDriver()
+                        //.findElement(By.xpath("//*[contains(text(),'" + title + "']/following-sibling::android.widget.FrameLayout"));
+                        .findElement(By.xpath("//*[@text='" + title + "']/following-sibling::android.widget.FrameLayout"));
+                log.info("isDisplated {}", target.isDisplayed());
+                target.click();
+            } catch (Exception ie) {
+                Utils.swipeScreen(Utils.Direction.UP);
+                TimeUnit.SECONDS.sleep(1);
+                WebElement target = AndroidManager.getDriver()
+                        .findElement(By.xpath("//*[@text='" + title + "']/following-sibling::android.widget.FrameLayout"));
+                target.click();
+            }
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -123,7 +125,37 @@ public class ReadFnctWhenStepDefine {
         try {
             log.info("플레이어 종료하기");
 
+            //콘텐츠가 없는 경우, return
+            try {
+                boolean noData = AndroidManager.getElementById("com.wjthinkbig.mlauncher2:id/no_data").isDisplayed();
+                if(noData) return;
+            } catch (Exception e) {}
+
             WebElement element;
+
+            //[동영상 플레이어-학습] 닫기
+            try {
+                element = AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/btn_study_back_button");
+
+                if (element.isDisplayed()) {
+                    log.info("[동영상 플레이어-학습] 닫기");
+                    element.click();
+                    AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/btn_confirm").click();
+                    return;
+                }
+            } catch (Exception e) {
+                try {
+                    //동영상 플레이어-학습인 경우에만, 닫기버튼이 안보일 경우 viewer 클릭 후 플레이어 닫기
+                    if (AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/player_view").isDisplayed()) {
+                        log.info("[동영상 플레이어-학습] 닫기");
+                        Utils.touchCenterInViewer(AndroidManager.getDriver());
+                        AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/btn_study_back_button").click();
+                        AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/btn_confirm").click();
+                        return;
+                    }
+                } catch (Exception ie) {
+                }
+            }
 
             //[동영상 플레이어] 닫기
             try {
@@ -136,6 +168,17 @@ public class ReadFnctWhenStepDefine {
                     return;
                 }
             } catch (Exception e) {
+                try {
+                    //동영상 플레이어인 경우에만, 닫기버튼이 안보일 경우 viewer 클릭 후 플레이어 닫기
+                    if (AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/player_view").isDisplayed()) {
+                        log.info("[동영상 플레이어] 닫기");
+                        Utils.touchCenterInViewer(AndroidManager.getDriver());
+                        AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/btnBack").click();
+                        AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/btn_confirm").click();
+                        return;
+                    }
+                } catch (Exception ie) {
+                }
             }
 
             //[북클럽 플레이어] 닫기
@@ -148,6 +191,16 @@ public class ReadFnctWhenStepDefine {
                     return;
                 }
             } catch (Exception e) {
+                try {
+                    //북클럽 플레이어인 경우에만, 닫기버튼이 안보일 경우 viewer 클릭 후 플레이어 닫기
+                    if (AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/layoutForRelationBookParent").isDisplayed()) {
+                        log.info("[북클럽 플레이어] 닫기");
+                        Utils.touchCenterInViewer(AndroidManager.getDriver());
+                        AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/groupCloseButton").click();
+                        return;
+                    }
+                } catch (Exception ie) {
+                }
             }
 
             //[북클럽 플레이어 미리보기] 닫기
@@ -160,29 +213,41 @@ public class ReadFnctWhenStepDefine {
                     return;
                 }
             } catch (Exception e) {
+                try {
+                    //북클럽 플레이어 미리보기인 경우에만, 닫기버튼이 안보일 경우 viewer 클릭 후 플레이어 닫기
+                    if (AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/back_btn").isDisplayed()) {
+                        log.info("[북클럽 플레이어 미리보기] 닫기");
+                        Utils.touchCenterInViewer(AndroidManager.getDriver());
+                        AndroidManager.getElementById("com.wjthinkbig.mlauncher2:id/back_btn").click();
+                        return;
+                    }
+                } catch (Exception ie) {
+                }
             }
 
-            //[북클럽 플레이어-멀티 터치북] 닫기
+            //[북클럽 플레이어-교과/멀티 터치북] 닫기
             try {
                 element = AndroidManager.getElementById("com.wjthinkbig.mlauncher2:id/today_button_home");
 
                 if (element.isDisplayed()) {
-                    log.info("[북클럽 플레이어-멀티 터치북] 닫기");
+                    log.info("[북클럽 플레이어-교과/멀티 터치북] 닫기");
                     element.click();
                     return;
                 }
             } catch (Exception e) {
                 try {
-                    //멀티 터치북의 경우, 우측하단 썸네일 모음 버튼 클릭해야 상하단 영역 아이템 사용 가능
-                    AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/btnBottomThumbnail").click();
-                    AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/today_button_home").click();
-                } catch (Exception ie) {}
+                    if (AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/epubMainFrame").isDisplayed()) {
+                        log.info("[북클럽 플레이어-교과/멀티 터치북] 닫기");
+                        Utils.touchCenterInViewer(AndroidManager.getDriver());
+                        //멀티 터치북의 경우, 우측하단 썸네일 모음 버튼 클릭해야 상하단 영역 아이템 사용 가능
+                        AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/layout_thumbnail_container").click();
+                        AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/btnBottomThumbnail").click();
+                        AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/today_button_home").click();
+                        return;
+                    }
+                } catch (Exception ie) {
+                }
             }
-
-            //닫기버튼이 안보일 경우, viewer 클릭 후 [북클럽 플레이어] 닫기
-            Utils.touchCenterInViewer(AndroidManager.getDriver());
-            element = AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/groupCloseButton");
-            element.click();
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -276,11 +341,12 @@ public class ReadFnctWhenStepDefine {
      * 독서 지난호 보기 n번재 콘텐츠 클릭
      */
     @When("독서 지난호 보기 {int}번째 콘텐츠 클릭")
-    public void 독서지난호보기n번째콘텐츠클릭(int idx) {
+    public void 독서지난호보기n번째콘텐츠클릭(int index) {
         try {
-            log.info("독서 지난호 보기 {}번째 항목 선택", idx);
-            WebElement parent = AndroidManager.getElementById("com.wjthinkbig.mlauncher2:id/rvPrevTodayList");
-            parent.findElements(By.id("com.wjthinkbig.mlauncher2:id/imgPrevToday")).get(idx).click();
+            log.info("독서 지난호 보기 {}번째 항목 선택", index);
+            String parentId = "com.wjthinkbig.mlauncher2:id/rvPrevTodayList";
+            String childId = "com.wjthinkbig.mlauncher2:id/imgPrevToday";
+            AndroidManager.getElementsByIdsAndIndex(parentId, childId, index).click();
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -293,17 +359,17 @@ public class ReadFnctWhenStepDefine {
      * 독서 n번째 콘텐츠 클릭
      */
     @When("독서 {int}번째 콘텐츠 클릭")
-    public void 독서n번째콘텐츠클릭(int idx) {
+    public void 독서n번째콘텐츠클릭(int index) {
         try {
-            log.info("독서 {}번째 콘텐츠 클릭", idx);
+            log.info("독서 {}번째 콘텐츠 클릭", index);
 
             //n번째 콘텐츠 element
             WebElement parent = AndroidManager.getElementById("com.wjthinkbig.mlauncher2:id/todayContainer");
-            WebElement element = parent.findElements(By.id("com.wjthinkbig.mlauncher2:id/selector_view")).get(idx);
+            WebElement element = parent.findElements(By.id("com.wjthinkbig.mlauncher2:id/selector_view")).get(index);
 
             //콘텐츠 이미지가 backView인 경우, 콘텐츠 한번 더 클릭하여 frontView로 만든 후 실행하기
             try {
-                WebElement backView = parent.findElements(By.id("com.wjthinkbig.mlauncher2:id/back_view")).get(idx);
+                WebElement backView = parent.findElements(By.id("com.wjthinkbig.mlauncher2:id/back_view")).get(index);
 
                 if (backView.isDisplayed()) {
                     log.info("콘텐츠 이미지가 backView인 경우, 한번 클릭하여 frontView가 보여지도록 처리");
@@ -368,14 +434,15 @@ public class ReadFnctWhenStepDefine {
     }
 
     /**
-     * 백과 콘텐츠 클릭
+     * 백과 첫번째 키워드 클릭
      */
-    @When("백과 {string} 콘텐츠 클릭")
-    public void 백과콘텐츠클릭(String contents) {
+    @When("백과 첫번째 키워드 클릭")
+    public void 백과첫번째키워드클릭() {
         try {
-            log.info("백과 {} 콘텐츠 클릭", contents);
+            log.info("백과 첫번째 키워드 클릭");
 
-            AndroidManager.getElementByXpath("//android.view.View[@content-desc='" + contents + "']").click();
+            String xpath = "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/android.widget.FrameLayout/android.webkit.WebView/android.webkit.WebView/android.view.View/android.view.View/android.view.View[1]/android.widget.ListView/android.view.View[1]";
+            AndroidManager.getElementByXpath(xpath).click();
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {

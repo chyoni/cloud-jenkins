@@ -467,12 +467,16 @@ public class Utils {
         try {
             while ((line = reader.readLine()) != null) {
                 if (line.contains("state:")) {
+
                     int startIndex = line.indexOf("state:");
                     int endIndex = startIndex + 15;
 
                     String result = line.substring(startIndex, endIndex);
+                    System.out.println(">>>>>>>>>>>>>" + line);
                     if (result.contains("started")) {
                         return true;
+                    } if(result.contains("paused")) {
+                        return false;
                     }
                 } else {
                     throw new RuntimeException("String 'state:' not found");

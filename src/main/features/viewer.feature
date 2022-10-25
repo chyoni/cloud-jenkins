@@ -17,6 +17,7 @@ Feature: Viewer feature
     And 사전 버튼 클릭
     Then 온라인 상태에서만 사전 검색이 가능하다는 안내 팝업 노출 확인
     And 알림팝업의 확인 버튼 클릭
+    Then Turn "On" WiFi
 
   Scenario: WIFI-OFF 감상문 쓰기 기능 확인 (viewer_002)
     Given 라이브러리 버튼 클릭
@@ -36,6 +37,7 @@ Feature: Viewer feature
     When 5초 대기
     Then Wifi 안내 팝업 노출 확인
     And Wifi 안내 팝업의 확인 버튼 클릭
+    Then Turn "On" WiFi
 
   Scenario: WIFI-OFF 독후퀴즈 기능 확인 (viewer_003)
     Given 라이브러리 버튼 클릭
@@ -55,6 +57,7 @@ Feature: Viewer feature
     When 5초 대기
     Then 네트워크 확인 팝업에서 확인 버튼 클릭
     And 5초 대기
+    Then Turn "On" WiFi
 
   Scenario: WIFI-OFF 감상문보기 기능 확인 (viewer_004)
     Given 라이브러리 버튼 클릭
@@ -74,6 +77,7 @@ Feature: Viewer feature
     When 5초 대기
     Then 감상문 보기 Wifi 안내 팝업 노출 확인
     And 감상문 보기 Wifi 안내 팝업의 확인 버튼 클릭
+    Then Turn "On" WiFi
 
   Scenario: WIFI-OFF 오디오북 보기 기능 확인 (viewer_005)
     Given 라이브러리 버튼 클릭
@@ -94,6 +98,7 @@ Feature: Viewer feature
     When 5초 대기
     Then 감상문 보기 Wifi 안내 팝업 노출 확인
     And 감상문 보기 Wifi 안내 팝업의 확인 버튼 클릭
+    Then Turn "On" WiFi
 
   Scenario: WIFI-OFF 짝꿍책 보기 기능 확인 (viewer_006)
     Given 라이브러리 버튼 클릭
@@ -115,6 +120,7 @@ Feature: Viewer feature
     When 5초 대기
     Then 짝꿍책 Wifi 안내 팝업 확인
     And 짝꿍책 Wifi 안내 팝업의 취소 버튼 클릭
+    Then Turn "On" WiFi
 
   Scenario: WIFI-OFF 도서완독 시 기능 확인 (viewer_007)
     Given 라이브러리 버튼 클릭
@@ -131,6 +137,7 @@ Feature: Viewer feature
     And Next page 5번 실행
     Then 감상문 보기 Wifi 안내 팝업 노출 확인
     And 감상문 보기 Wifi 안내 팝업의 확인 버튼 클릭
+    Then Turn "On" WiFi
 
   Scenario: WIFI-OFF 녹음 후 오디오북 만들기 시 기능 확인 (viewer_008)
     Given 라이브러리 버튼 클릭
@@ -162,6 +169,7 @@ Feature: Viewer feature
     And 오디오북 만들기 전 화면에서 배경음 선택 시 3번째 배경음 선택
     And 오디오북 만들기 버튼 클릭
     Then "Wi-Fi를 연결해주세요" 문구가 담긴 토스트 팝업 노출 확인
+    Then Turn "On" WiFi
 
   Scenario: 뷰어 진입 시 로딩화면 확인 (viewer_009)
     Given 라이브러리 버튼 클릭
@@ -330,7 +338,7 @@ Feature: Viewer feature
   Scenario: 감상문이 이미 작성된 경우 감상문쓰기 버튼 클릭 시 동작 확인 (viewer_017)
     Given 라이브러리 버튼 클릭
     When 검색 버튼 클릭
-    And 검색창에서 "네모, 안녕?" 입력
+    And 검색창에서 "냠냠 빙수" 입력
     And 검색창에서 검색 실행 버튼 클릭
     And 검색결과 화면에서 독서 검색결과 섹션의 0번째 항목 선택
     And 15초 대기
@@ -342,8 +350,8 @@ Feature: Viewer feature
     And 감상문쓰기 버튼 클릭
     And 일반 안내 팝업의 확인 버튼 클릭
     And 3초 대기
+    And 감상문 3개 모두 작성하기
     Then 이미 감상문이 존재할 경우 노출되는 화면 확인
-    And 이미 감상문이 작성되어 있는 화면에서 감상문을 작성해주세요 버튼 클릭
 
   Scenario: 감상문이 3개 모두 작성된 화면 확인 (viewer_018)
     Given 라이브러리 버튼 클릭
@@ -438,6 +446,14 @@ Feature: Viewer feature
     And 코치마크 노출 시 닫기
     And Reading continue "No"
     And 15초 대기
+    And 플레이어 내에서 상단바 노출
+    And 더보기 버튼 클릭
+    And 감상문쓰기 버튼 클릭
+    And 일반 안내 팝업의 확인 버튼 클릭
+    And 3초 대기
+    And 감상문 3개 모두 작성하기
+    And 감상문 작성 리스트 화면에서 X 버튼 클릭
+    And 6초 대기
     And 플레이어 내에서 상단바 노출
     And 더보기 버튼 클릭
     And 감상문 보기 버튼 클릭
@@ -610,46 +626,46 @@ Feature: Viewer feature
 
   # 이 시나리오는 완독 후 딱 한번만 평가가 가능함, 그래서 테스트를 수행하려면 할 때마다 책을 바꿔줘야 함 (책을 바꾸면 당연히 Next Page 수도 바꿔줘야 할 것)
 #  @Not
-#  Scenario: 완독 후 뷰어 종료 시 평가 화면 노출 확인 (viewer_032)
-#    Given 라이브러리 버튼 클릭
-#    When 검색 버튼 클릭
-#    And 검색창에서 "네, 네!" 입력
-#    And 검색창에서 검색 실행 버튼 클릭
-#    And 검색결과 화면에서 독서 검색결과 섹션의 0번째 항목 선택
-#    And 15초 대기
-#    And 코치마크 노출 시 닫기
-#    And Reading continue "No"
-#    And 10초 대기
-#    And Next page 14번 실행
-#    And 감상문 보기 팝업에서 X 버튼 클릭
-#    And 15초 대기
-#    And 플레이어 내에서 상단바 노출
-#    And 뷰어 종료
-#    Then 평가 화면 노출 확인
-#    And 평가 항목 좋아요 클릭
-#    Then 평가완료 버튼 노출 확인
+  Scenario: 완독 후 뷰어 종료 시 평가 화면 노출 확인 (viewer_032)
+    Given 라이브러리 버튼 클릭
+    When 검색 버튼 클릭
+    And 검색창에서 "네, 네!" 입력
+    And 검색창에서 검색 실행 버튼 클릭
+    And 검색결과 화면에서 독서 검색결과 섹션의 0번째 항목 선택
+    And 15초 대기
+    And 코치마크 노출 시 닫기
+    And Reading continue "No"
+    And 10초 대기
+    And Next page 14번 실행
+    And 감상문 보기 팝업에서 X 버튼 클릭
+    And 15초 대기
+    And 플레이어 내에서 상단바 노출
+    And 뷰어 종료
+    Then 평가 화면 노출 확인
+    And 평가 항목 좋아요 클릭
+    Then 평가완료 버튼 노출 확인
 
   # 이 시나리오는 완독 후 딱 한번만 평가가 가능함, 그래서 테스트를 수행하려면 할 때마다 책을 바꿔줘야 함 (책을 바꾸면 당연히 Next Page 수도 바꿔줘야 할 것)
 #  @Not
-#  Scenario: 완독 후 뷰어 종료 시 평가 화면에서 평가완료 버튼 클릭 시 동작 확인 (viewer_033)
-#    Given 라이브러리 버튼 클릭
-#    When 검색 버튼 클릭
-#    And 검색창에서 "알록달록 그림이 좋아!" 입력
-#    And 검색창에서 검색 실행 버튼 클릭
-#    And 검색결과 화면에서 독서 검색결과 섹션의 0번째 항목 선택
-#    And 15초 대기
-#    And 코치마크 노출 시 닫기
-#    And Reading continue "No"
-#    And 10초 대기
-#    And Next page 16번 실행
-#    And 감상문 보기 팝업에서 X 버튼 클릭
-#    And 15초 대기
-#    And 플레이어 내에서 상단바 노출
-#    And 뷰어 종료
-#    Then 평가 화면 노출 확인
-#    And 평가 항목 좋아요 클릭
-#    And 평가완료 버튼 클릭
-#    Then 검색결과 화면으로 이동 확인
+  Scenario: 완독 후 뷰어 종료 시 평가 화면에서 평가완료 버튼 클릭 시 동작 확인 (viewer_033)
+    Given 라이브러리 버튼 클릭
+    When 검색 버튼 클릭
+    And 검색창에서 "알록달록 그림이 좋아!" 입력
+    And 검색창에서 검색 실행 버튼 클릭
+    And 검색결과 화면에서 독서 검색결과 섹션의 0번째 항목 선택
+    And 15초 대기
+    And 코치마크 노출 시 닫기
+    And Reading continue "No"
+    And 10초 대기
+    And Next page 16번 실행
+    And 감상문 보기 팝업에서 X 버튼 클릭
+    And 15초 대기
+    And 플레이어 내에서 상단바 노출
+    And 뷰어 종료
+    Then 평가 화면 노출 확인
+    And 평가 항목 좋아요 클릭
+    And 평가완료 버튼 클릭
+    Then 검색결과 화면으로 이동 확인
 
   Scenario: PDF 도서 경우 세로모드로 전환되어 노출 확인 (viewer_034)
     Given 라이브러리 버튼 클릭
@@ -709,7 +725,12 @@ Feature: Viewer feature
     And 10초 대기
     And 플레이어 내에서 상단바 노출
     And 더보기 버튼 클릭
-    And 사전 버튼 클릭
+    Then 사전 버튼 클릭
+    And 사전 검색 종료 버튼 클릭
+    And 10초 대기
+    And 플레이어 내에서 상단바 노출
+    And 더보기 버튼 클릭
+    Then 사전 버튼 클릭 코치마크 미확인
     Then "검색할 단어를 선택해 주세요." 문구가 담긴 토스트 팝업 노출 확인
 
   # 해당 도서에서만 수행 가능한 시나리오 (사전 검색 시 어떠한 엘리먼트도 잡아낼 수 없어서 TouchAction으로 x,y offset을 활용)
@@ -780,9 +801,13 @@ Feature: Viewer feature
     Then 보기 버튼들 노출 확인
     And 단면보기 버튼 클릭
     Then "단면 보기가 설정되었습니다." 문구가 담긴 토스트 팝업 노출 확인
+    And 10초 대기
+    And 플레이어 내에서 상단바 노출
     And 보기타입 버튼 클릭
     And 단면보기 버튼 클릭
     Then "양면 보기가 설정되었습니다." 문구가 담긴 토스트 팝업 노출 확인
+    And 10초 대기
+    And 플레이어 내에서 상단바 노출
     And 보기타입 버튼 클릭
     And 채워보기 버튼 클릭
     Then "채워 보기가 설정되었습니다." 문구가 담긴 토스트 팝업 노출 확인
@@ -1051,10 +1076,23 @@ Feature: Viewer feature
 
   Scenario: 마이 - 오디오이북 연속재생 완료 동작 확인 (viewer_054)
     Given 라이브러리 버튼 클릭
+    When 검색 버튼 클릭
+    And 검색창에서 "네모, 안녕?" 입력
+    And 검색창에서 검색 실행 버튼 클릭
+    And 검색결과 화면에서 독서 검색결과 섹션의 0번째 항목 선택
+    And 속속 캐스트북 확인 버튼 클릭
+    And 14초 대기
+    And 코치마크 노출 시 닫기
+    And Reading continue "No"
+    And 14초 대기
+    And 플레이어 내에서 상단바 노출
+    And 뷰어 종료
+    And 짝꿍책 선택 레이아웃 노출 시 닫기
+    And 검색 결과 화면에서 뒤로가기 버튼
     When 마이 버튼 클릭
     And 마이 - 오디오 이북 클릭
-    And 북마크 스피너 버튼 클릭
-    And 북마크 스피너의 즐겨찾기 버튼 클릭
+    And 3초 대기
+    And 마이 - 오디오 이북에서 읽은순 버튼 클릭
     And 연속재생 버튼 클릭
     And 마이 - 오디오 이북의 연속 재생할 책 1권 선택
     And 연속재생 버튼 클릭
@@ -1137,6 +1175,8 @@ Feature: Viewer feature
     And 오른쪽에서 왼쪽으로 스와이프
     And 오른쪽에서 왼쪽으로 스와이프
     And 오른쪽에서 왼쪽으로 스와이프
+    And 오른쪽에서 왼쪽으로 스와이프
+    And 오른쪽에서 왼쪽으로 스와이프
     Then 녹음 저장 화면 노출 확인
     And 왼쪽에서 오른쪽으로 스와이프
     Then 녹음모드 화면 확인
@@ -1178,6 +1218,8 @@ Feature: Viewer feature
     Then 녹음 진행 중 확인
     And 5초 대기
     And 녹음 시작 버튼 클릭
+    And 오른쪽에서 왼쪽으로 스와이프
+    And 오른쪽에서 왼쪽으로 스와이프
     And 오른쪽에서 왼쪽으로 스와이프
     And 오른쪽에서 왼쪽으로 스와이프
     And 오른쪽에서 왼쪽으로 스와이프

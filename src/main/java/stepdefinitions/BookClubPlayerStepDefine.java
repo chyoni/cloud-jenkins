@@ -98,12 +98,15 @@ public class BookClubPlayerStepDefine {
     public void 동영상일시정지() {
         try {
             log.info("동영상일시정지");
+            TimeUnit.SECONDS.sleep(3);
             boolean vdoPlayYN = Utils.isVideoPlayerRunning();
+            System.out.println(">>>>>>>>>>>>>" + vdoPlayYN);
             if (!vdoPlayYN) {
                 return;
             }
             fail("동영상이 재생중입니다.");
         } catch (Exception e) {
+            System.out.println(">>>>>>>>>>>>>" + e);
             fail("Element you found not shown");
         }
     }
@@ -539,7 +542,8 @@ public class BookClubPlayerStepDefine {
     public void 전체동영상기준클릭() {
         try {
             log.info("전체동영상기준클릭");
-            AndroidManager.getElementByXpath("(//android.widget.ImageButton[@content-desc=\"증가\"])[1]").click();
+            WebElement parent = AndroidManager.getElementById("com.wjthinkbig.mbookwifi2:id/npAll");
+            parent.findElement(By.id("android:id/increment")).click();
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -566,11 +570,6 @@ public class BookClubPlayerStepDefine {
         try {
             //전체 동영상 기준 선택 시 횟수 가져오기
             log.info("count 확인하기");
-            WebElement count = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.LinearLayout[1]/android.widget.LinearLayout/android.widget.EditText");
-            //int로 형변환
-            int countNum = Integer.parseInt(count.getText());
-            log.info("동영상시청제한확인버튼클릭");
-            AndroidManager.getElementById("com.wjthinkbig.mbookwifi2:id/btnOK").click();
             log.info("{}초 대기", seconds - 15);
             TimeUnit.SECONDS.sleep(seconds - 15);
             WebElement element = AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/tvRemainSetting");
@@ -579,16 +578,16 @@ public class BookClubPlayerStepDefine {
             result = result.substring(0, index - 1);
             int resultNum = Integer.parseInt(result);
             log.info("남은 횟수 {}회", resultNum);
-            if (resultNum == countNum) {
+            if (resultNum != 0) {
                 log.info("{}초 대기", seconds);
                 TimeUnit.SECONDS.sleep(seconds);
                 element = AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/tvRemainSetting");
-                result = element.getText();
-                index = result.length();
-                result = result.substring(0, index - 1);
-                resultNum = Integer.parseInt(result);
-                log.info("남은 횟수 {}회", resultNum);
-                if (resultNum == countNum - 1) return;
+                String count = element.getText();
+                index = count.length();
+                count = count.substring(0, index - 1);
+                int countNum = Integer.parseInt(count);
+                log.info("남은 횟수 {}회", countNum);
+                if (resultNum-1 == countNum) return;
             }
             fail("남은횟수 감소 확인이 되지 않았습니다.");
         } catch (NoSuchElementException e) {
@@ -663,9 +662,6 @@ public class BookClubPlayerStepDefine {
                     비밀번호입력();
                     비밀번호입력확인버튼클릭();
                     TimeUnit.SECONDS.sleep(3);
-                    log.info("Home으로 이동");
-                    AndroidManager.getDriver().pressKey(new KeyEvent(AndroidKey.HOME));
-                    TimeUnit.SECONDS.sleep(15);
                 }
             }catch (Exception e){
                 log.info("Home으로 이동");
@@ -695,7 +691,9 @@ public class BookClubPlayerStepDefine {
         }
     }
 
-
+/*
+* 동일 동영상 시청 제한 팝업 표출을 위해 동일 동영상 기준 클릭에서는 1일 때 break
+* */
     @When("동일 동영상 기준 클릭")
     public void 동일동영상기준클릭() {
         try {
@@ -704,9 +702,9 @@ public class BookClubPlayerStepDefine {
             WebElement count = null;
             int countInt = 0;
             while(true){
-                element = AndroidManager.getElementByXpath("(//android.widget.ImageButton[@content-desc=\"감소\"])[2]");
-                element.click();
-                count = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.LinearLayout[2]/android.widget.LinearLayout/android.widget.EditText");
+                element = AndroidManager.getElementById("com.wjthinkbig.mbookwifi2:id/npSame");
+                element.findElement(By.id("android:id/increment")).click();
+                count = element.findElement(By.id("android:id/numberpicker_input"));
                 countInt = Integer.parseInt(count.getText());
                 if (countInt == 1) break;
             }
@@ -724,13 +722,10 @@ public class BookClubPlayerStepDefine {
         try {
             //전체 동영상 기준 선택 시 횟수 가져오기
             log.info("count 확인하기");
-            WebElement count = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.LinearLayout[2]/android.widget.LinearLayout/android.widget.EditText");
+            WebElement parent = AndroidManager.getElementById("com.wjthinkbig.mbookwifi2:id/npSame");
+            WebElement count = parent.findElement(By.id("android:id/numberpicker_input"));
             //int로 형변환
             int countNum = Integer.parseInt(count.getText());
-            if (countNum == 1) {
-                log.info("1회 재생 시 동일동영상 한 번 더 클릭");
-                AndroidManager.getElementByXpath("(//android.widget.ImageButton[@content-desc=\"증가\"])[2]").click();
-            }
             countNum = Integer.parseInt(count.getText());
             log.info("동영상시청제한확인버튼클릭");
             AndroidManager.getElementById("com.wjthinkbig.mbookwifi2:id/btnOK").click();
@@ -766,11 +761,12 @@ public class BookClubPlayerStepDefine {
     public void 전체시청시간클릭() {
         try {
             log.info("전체시청시간클릭");
-            AndroidManager.getElementByXpath("(//android.widget.ImageButton[@content-desc=\"증가\"])[3]").click();
-            WebElement element = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.LinearLayout[3]/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.EditText");
+            WebElement parent = AndroidManager.getElementById("com.wjthinkbig.mbookwifi2:id/npTime1");
+            parent.findElement(By.id("android:id/increment")).click();
+            WebElement element = parent.findElement(By.id("android:id/numberpicker_input"));
             int time = Integer.parseInt(element.getText());
             if (time == 0) {
-                AndroidManager.getElementByXpath("(//android.widget.ImageButton[@content-desc=\"증가\"])[3]").click();
+                parent.findElement(By.id("android:id/increment")).click();
             }
             log.info("{}초 대기", 2);
             TimeUnit.SECONDS.sleep(2);
@@ -1039,8 +1035,11 @@ public class BookClubPlayerStepDefine {
         try {
             log.info("사회 버튼 클릭");
             Utils.dragSourceToTarget(964, 1164, 964, 50);
+            Utils.dragSourceToTarget(964, 1164, 964, 400);
+            Utils.dragSourceToTarget(964, 438, 964, 580);
             WebElement element = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[1]/android.widget.RelativeLayout/android.widget.ImageView[2]");
             element.click();
+            updateCheck();
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -1081,8 +1080,26 @@ public class BookClubPlayerStepDefine {
     public void _1호클릭() {
         try {
             log.info("1호 클릭");
-            WebElement element = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.ListView[2]/android.widget.RelativeLayout[1]/android.widget.LinearLayout/android.widget.ImageView");
-            element.click();
+            for (int k = 1; k < 5; k++) {
+                String parentXPath = "/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.ListView[2]/android.widget.RelativeLayout[" + k + "]";
+                String childXPath =  parentXPath + "/android.widget.LinearLayout/android.widget.TextView";
+
+                WebElement parentElement = AndroidManager.getElementByXpath(parentXPath);
+                WebElement childElement = AndroidManager.getElementByXpath(childXPath);
+
+                if (childElement.getText().equals("1 호   :   1 - 1 .   우 리 가   생 각 하 는   고 장 의   모 습 ( 1 )")) {
+                    log.info("1호 텍스트 확인 후 해당 element 클릭");
+                    childElement.click();
+                    break;
+                }
+            }
+            updateCheck();
+            WebElement element = AndroidManager.getElementById("com.wjthinkbig.integratedquration.main:id/txt_subject_description");
+            if(element.getText().contains("1 - 1")) return;
+            좌측상단단계선택버튼클릭();
+            f단계클릭();
+            _1호클릭();
+            updateCheck();
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -1095,8 +1112,22 @@ public class BookClubPlayerStepDefine {
     public void 개념쏙쏙1클릭() {
         try {
             log.info("개념쏙쏙1 클릭");
-            WebElement element = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.RelativeLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.ExpandableListView/android.widget.LinearLayout[1]/android.widget.GridView/android.widget.RelativeLayout[1]/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.ImageView");
-            element.click();
+            WebElement element;
+            Utils.touchSpecificCoordinates(1048, 411);
+            try {
+                element = AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/btn_study_back_button");
+                log.info("한 번에 클릭 될 시 패스");
+                if(element.isDisplayed()) return;
+            }catch (Exception e){
+                TimeUnit.SECONDS.sleep(3);
+                element = AndroidManager.getElementById("com.wjthinkbig.integratedquration.main:id/txt_subject_name");
+                log.info("체크표시 상태 시 2번 클릭");
+                if(element.isDisplayed()) {
+                    Utils.touchSpecificCoordinates(1048, 411);
+                    TimeUnit.SECONDS.sleep(1);
+                    Utils.touchSpecificCoordinates(1048, 411);
+                }
+            }
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -1183,8 +1214,10 @@ public class BookClubPlayerStepDefine {
         try {
             log.info("Reading Master 버튼 클릭");
             Utils.dragSourceToTarget(964, 1164, 964, 50);
-            WebElement element = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[4]/android.widget.RelativeLayout/android.widget.ImageView[2]");
-            element.click();
+            Utils.dragSourceToTarget(964, 1164, 964, 400);
+            Utils.dragSourceToTarget(964, 438, 964, 580);
+            TimeUnit.SECONDS.sleep(3);
+            Utils.touchSpecificCoordinates(1494, 323);
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -1197,7 +1230,35 @@ public class BookClubPlayerStepDefine {
     public void 영상버튼클릭() {
         try {
             log.info("영상 버튼 클릭");
-            Utils.touchSpecificCoordinates(1732, 411);
+            Utils.touchSpecificCoordinates(1720, 415);
+            WebElement element;
+            log.info("{}초 대기", 3);
+            TimeUnit.SECONDS.sleep(3);
+            try {
+                element = AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/btn_study_back_button");
+                if(element.isDisplayed()) return;
+            }catch (Exception e){
+                try {
+                    log.info("만약 PDF로 잘못 들어왔을 시 나가기 버튼 클릭 후 재 동작");
+                    element = AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/text_confirm_title");
+                    if (element.isDisplayed()) {
+                        element = AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/btn_cancel");
+                        element.click();
+                        element = AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/btnFirst");
+                        element.click();
+                        log.info("{}초 대기", 5);
+                        TimeUnit.SECONDS.sleep(5);
+                        영상버튼클릭();
+                    }
+                }catch (Exception e2){
+                    pdfScreenNotShown();
+                    element = AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/btnFirst");
+                    element.click();
+                    log.info("{}초 대기", 5);
+                    TimeUnit.SECONDS.sleep(5);
+                    영상버튼클릭();
+                }
+            }
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -1229,6 +1290,7 @@ public class BookClubPlayerStepDefine {
             Utils.dragSourceToTarget(964, 1164, 964, 400);
             WebElement element = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[1]/android.widget.RelativeLayout/android.widget.ImageView[2]");
             element.click();
+            updateCheck();
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -1257,6 +1319,7 @@ public class BookClubPlayerStepDefine {
             log.info("한글 꺠치기 본학습단계 클릭");
             WebElement element = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.ListView[1]/android.widget.LinearLayout[2]/android.widget.RelativeLayout/android.widget.TextView");
             element.click();
+            updateCheck();
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -1667,15 +1730,16 @@ public class BookClubPlayerStepDefine {
     public void 시간변경동작확인() {
         try {
             log.info("시간 변경 동작 확인");
-            WebElement timeDownButton = AndroidManager.getElementByXpath("(//android.widget.ImageButton[@content-desc=\"감소\"])[1]");
+            WebElement parent = AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/npTime1");
+            WebElement timeDownButton = parent.findElement(By.id("android:id/decrement"));
             timeDownButton.click();
-            WebElement timeTextElement = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.EditText");
+            WebElement timeTextElement = parent.findElement(By.id("android:id/numberpicker_input"));
             String timeText = timeTextElement.getText();
             int timeInt = Integer.parseInt(timeText);
             if (timeInt == 12) {
-                timeDownButton = AndroidManager.getElementByXpath("(//android.widget.ImageButton[@content-desc=\"감소\"])[2]");
+                timeDownButton = AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/npTime2").findElement(By.id("android:id/decrement"));
                 timeDownButton.click();
-                timeTextElement = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout[2]/android.widget.EditText");
+                timeTextElement = AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/npTime2").findElement(By.id("android:id/numberpicker_input"));
                 timeText = timeTextElement.getText();
                 timeInt = Integer.parseInt(timeText);
                 if (timeInt == 4) return;
@@ -1784,6 +1848,7 @@ public class BookClubPlayerStepDefine {
             log.info("학습 수학2 클릭");
             WebElement math2 = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[6]/android.widget.RelativeLayout/android.widget.ImageView[2]");
             if (math2.isDisplayed()) math2.click();
+            updateCheck();
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -1827,6 +1892,7 @@ public class BookClubPlayerStepDefine {
             log.info("수학 1호 클릭");
             WebElement element = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.ListView[2]/android.widget.RelativeLayout[1]/android.widget.LinearLayout");
             element.click();
+            updateCheck();
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -1840,16 +1906,15 @@ public class BookClubPlayerStepDefine {
         try {
             log.info("개념강의1 클릭");
             WebElement element = null;
+            element = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/androidx.viewpager.widget.ViewPager/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.ImageView[2]");
+            element.click();
+            log.info("{}초 대기", 1);
+            TimeUnit.SECONDS.sleep(1);
             try{
-                element = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/androidx.viewpager.widget.ViewPager/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.ImageView[2]");
-                element.click();
-                log.info("{}초 대기", 1);
-                TimeUnit.SECONDS.sleep(1);
                 element = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/androidx.viewpager.widget.ViewPager/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.ImageView[1]");
                 if (element.isDisplayed()) element.click();
             }catch (Exception e){
-                element = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/androidx.viewpager.widget.ViewPager/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.FrameLayout[1]/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.ImageView[1]");
-                element.click();
+                return;
             }
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
@@ -1935,16 +2000,16 @@ public class BookClubPlayerStepDefine {
             int minute = 0;
             WebElement element = null;
             while (true){
-                element = AndroidManager.getElementByXpath("(//android.widget.ImageButton[@content-desc=\"감소\"])[3]");
+                element = AndroidManager.getElementById("com.wjthinkbig.mbookwifi2:id/npTime1").findElement(By.id("android:id/decrement"));
                 element.click();
-                timeElement = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.LinearLayout[3]/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.EditText");
+                timeElement = AndroidManager.getElementById("com.wjthinkbig.mbookwifi2:id/npTime1").findElement(By.id("android:id/numberpicker_input"));
                 time = Integer.parseInt(timeElement.getText());
                 if(time == 0) break;
             }
             while (true){
-                element = AndroidManager.getElementByXpath("(//android.widget.ImageButton[@content-desc=\"감소\"])[4]");
+                element = AndroidManager.getElementById("com.wjthinkbig.mbookwifi2:id/npTime2").findElement(By.id("android:id/decrement"));
                 element.click();
-                minuteElement = AndroidManager.getElementByXpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.LinearLayout/android.widget.LinearLayout[1]/android.widget.LinearLayout[3]/android.widget.LinearLayout/android.widget.LinearLayout[2]/android.widget.EditText");
+                minuteElement = AndroidManager.getElementById("com.wjthinkbig.mbookwifi2:id/npTime2").findElement(By.id("android:id/numberpicker_input"));
                 minute = Integer.parseInt(minuteElement.getText());
                 if(minute == 15) break;
             }
@@ -1975,6 +2040,7 @@ public class BookClubPlayerStepDefine {
         try {
             log.info("화면 x:{}, y:{} 지점 터치", xX, yY);
             Utils.touchSpecificCoordinates(xX, yY);
+            TimeUnit.SECONDS.sleep(1);
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -2248,7 +2314,7 @@ public class BookClubPlayerStepDefine {
     @When("이전_다음버튼 {int}회 동작")
     public void 이전_다음버튼회동작(int arg0) {
         try {
-            log.info("셔플 버튼 클릭");
+            log.info("이전 다음 버튼 동작");
             for(int i = 0; i < arg0; i++){
                 다음버튼클릭();
                 log.info("3초 대기");
@@ -2256,6 +2322,13 @@ public class BookClubPlayerStepDefine {
                 이전버튼클릭();
                 log.info("3초 대기");
                 TimeUnit.SECONDS.sleep(3);
+            }
+            TimeUnit.SECONDS.sleep(2);
+            boolean vdoPlayYN = Utils.isVideoPlayerRunning();
+            if(vdoPlayYN){
+                return;
+            }else {
+                AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/player_overlay_play").click();
             }
         }catch(NoSuchElementException e){
             fail("Element you found not shown");
@@ -2342,12 +2415,14 @@ public class BookClubPlayerStepDefine {
         }
     }
 
-    @When("화면 표줄 안될 때 화면 1번 터치")
+
+
+    @When("학습 화면 표출 안될 때 화면 터치")
     public void 화면표줄안될때화면번터치() {
         try {
-            log.info("화면 표줄 안될 때 화면 1번 터치");
+            log.info("학습 화면 표출 안될 때 화면 터치");
             try {
-                WebElement element = AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/btn_study_back_button");
+                WebElement element = AndroidManager.getElementById("com.wjthinkbig.mvideo2:id/btn_study_lock_button");
                 if (element.isDisplayed()) return;
             }catch (Exception e){
                 Utils.touchCenterInViewer(AndroidManager.getDriver());
@@ -2357,6 +2432,38 @@ public class BookClubPlayerStepDefine {
         } catch (Exception e) {
             fail(e.getMessage());
             System.exit(0);
+        }
+    }
+    public void pdfScreenNotShown() {
+        try {
+            log.info("학습 화면 표출 안될 때 화면 터치");
+            try {
+                WebElement element = AndroidManager.getElementById("com.wjthinkbig.mepubviewer2:id/btnFirst");
+                if (element.isDisplayed()) return;
+            }catch (Exception e){
+                Utils.touchCenterInViewer(AndroidManager.getDriver());
+            }
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    public void updateCheck() {
+        try{
+            WebElement element = AndroidManager.getElementById("com.wjthinkbig.minstaller2m:id/btn_install_start");
+            if(element.isDisplayed() && element.getText().equals("지금 설치하기")){
+                element.click();
+                log.info("{}초 대기", 100);
+                TimeUnit.SECONDS.sleep(100);
+                element = AndroidManager.getElementById("com.wjthinkbig.minstaller2m:id/btn_update_complated");
+                element.click();
+                TimeUnit.SECONDS.sleep(2);
+            }
+        }catch (Exception e){
+            return;
         }
     }
 }

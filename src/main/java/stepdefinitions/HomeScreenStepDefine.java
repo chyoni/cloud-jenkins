@@ -3,6 +3,7 @@ package stepdefinitions;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.AndroidManager;
@@ -26,7 +27,12 @@ public class HomeScreenStepDefine {
     public void clickReadingBtn() {
         try {
             log.info("홈 > 독서 버튼 클릭");
-            AndroidManager.getElementByXpath(Constant.독서_xPath).click();
+            WebElement element = AndroidManager.getElementByXpath(Constant.독서_xPath);
+            element.click();
+            TimeUnit.SECONDS.sleep(2);
+            //간혹 한번에 클릭되지 않는 경우가 있어 미선택시 다시 한번 클릭하도록 처리함
+            if(!element.isSelected()) element.click();
+            TimeUnit.SECONDS.sleep(2);
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -42,7 +48,12 @@ public class HomeScreenStepDefine {
     public void clickStudyBtn() {
         try {
             log.info("홈 > 학습 버튼 클릭");
-            AndroidManager.getElementByXpath(Constant.학습_xPath).click();
+            WebElement element = AndroidManager.getElementByXpath(Constant.학습_xPath);
+            element.click();
+            TimeUnit.SECONDS.sleep(2);
+            //간혹 한번에 클릭되지 않는 경우가 있어 미선택시 다시 한번 클릭하도록 처리함
+            if(!element.isSelected()) element.click();
+            TimeUnit.SECONDS.sleep(2);
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -58,7 +69,12 @@ public class HomeScreenStepDefine {
     public void clickLibraryBtn() {
         try {
             log.info("홈 > 라이브러리 버튼 클릭");
-            AndroidManager.getElementByXpath(Constant.라이브러리_xPath).click();
+            WebElement element = AndroidManager.getElementByXpath(Constant.라이브러리_xPath);
+            element.click();
+            TimeUnit.SECONDS.sleep(2);
+            //간혹 한번에 클릭되지 않는 경우가 있어 미선택시 다시 한번 클릭하도록 처리함
+            if(!element.isSelected()) element.click();
+            TimeUnit.SECONDS.sleep(2);
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -116,7 +132,18 @@ public class HomeScreenStepDefine {
     @Given("웅진 스마트올 버튼 클릭")
     public void 웅진스마트올버튼클릭() {
         log.info("홈 > 웅진 스마트올 버튼 클릭");
-        AndroidManager.getElementById(Constant.웅진스마트올_id).click();
+
+        //웅진 북클럽 영역에서 클릭하는 경우,
+        try {
+            AndroidManager.getElementById(Constant.웅진스마트올_id).click();
+            return;
+        } catch (Exception e) {}
+
+        //웅진 스마트올 영역에서 클릭하는 경우,
+        try {
+            AndroidManager.getElementById("com.wjthinkbig.mlauncher2:id/rlt2020Smart").click();
+            return;
+        } catch (Exception e) {}
     }
 
     /**
@@ -161,16 +188,50 @@ public class HomeScreenStepDefine {
     }
 
     /**
+     * 마이 - 오디오 이북에서 읽은순 버튼 클릭
+     */
+    @When("마이 - 오디오 이북에서 읽은순 버튼 클릭")
+    public void clickDateOrderBtn() {
+        try {
+            log.info("마이 - 오디오 이북에서 읽은순 버튼 클릭");
+            AndroidManager.getElementById(Constant.orderDateBtn_id).click();
+            TimeUnit.SECONDS.sleep(2);
+            AndroidManager.getElementById(Constant.orderDateBtn_id).click();
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    /**
      * 마이 - 오디오 이북의 연속 재생할 책 5권 선택
      */
     @When("마이 - 오디오 이북의 연속 재생할 책 {int}권 선택")
     public void selectAudioEBooksByParam(int count) {
         try {
-            log.info("마이 - 오디오 이북의 연속 재생할 책 5권 선택");
+            log.info("마이 - 오디오 이북의 연속 재생할 책 {}권 선택", count);
             for (int i = 0; i < count; i++) {
                 AndroidManager.getElementsByIdAndIndex("com.wjthinkbig.mlauncher2:id/contentsImg", i).click();
                 TimeUnit.SECONDS.sleep(2);
             }
+        } catch (NoSuchElementException e) {
+            fail("Element you found not shown");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    /**
+     * 검색 결과 화면에서 뒤로가기 버튼
+     */
+    @When("검색 결과 화면에서 뒤로가기 버튼")
+    public void goBackOnSearchScreen() {
+        try {
+            log.info("검색 결과 화면에서 뒤로가기 버튼");
+            AndroidManager.getElementById(Constant.backOnSearchScreen_id).click();
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
