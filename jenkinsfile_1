@@ -227,7 +227,7 @@ pipeline {
 
                         // ! 기존 report json 파일을 삭제
                         if (fileExists("${map.cucumber.report_json}")) {
-                            bat("rmdir /s /q ${map.cucumber.report_json}")
+                            bat("del ${map.cucumber.report_json}")
                         }
 
                         // ! 기존 log_path 파일과 폴더를 삭제
