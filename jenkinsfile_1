@@ -222,17 +222,17 @@ pipeline {
 
                         // ! 기존 defect_screenshot 폴더와 파일을 삭제
                         if (fileExists("${map.cucumber.defect_screenshot_path}")) {
-                            bat("rmdir /s ${map.cucumber.defect_screenshot_path}")
+                            bat("rmdir /s /q ${map.cucumber.defect_screenshot_path}")
                         }
 
                         // ! 기존 report json 파일을 삭제
                         if (fileExists("${map.cucumber.report_json}")) {
-                            bat("rmdir /s ${map.cucumber.report_json}")
+                            bat("rmdir /s /q ${map.cucumber.report_json}")
                         }
 
                         // ! 기존 log_path 파일과 폴더를 삭제
                         if (fileExists("${map.cucumber.log_path}")) {
-                            bat("rmdir /s ${map.cucumber.log_path}")
+                            bat("rmdir /s /q ${map.cucumber.log_path}")
                         }
                         try {
                             // ! Run cucumber test command line
