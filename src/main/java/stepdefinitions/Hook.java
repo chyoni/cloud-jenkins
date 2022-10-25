@@ -9,6 +9,7 @@ import io.cucumber.java.en.When;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.AndroidManager;
@@ -28,10 +29,10 @@ import static org.junit.Assert.fail;
 
 /**
  * 시나리오 진행 시 Before, After 같은 메소드와 유틸성 메소드에 대한 Hook 정의 클래스
- * */
+ */
 public class Hook {
 
-    private final Logger log =  LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Before(order = 0)
     public void before(Scenario scenario) throws InterruptedException {
@@ -52,14 +53,15 @@ public class Hook {
 
             String cleanFileName = scenario.getName().trim().replaceAll(" ", "_");
 
-            File file = AndroidManager.getDriver().getScreenshotAs(OutputType.FILE);
+            File file = ((TakesScreenshot) AndroidManager.getDriver()).getScreenshotAs(OutputType.FILE);
             String scrShotDir = "defect_screenshots";
             new File(scrShotDir).mkdirs();
 
             Path currentDirectoryPath = Paths.get("").toAbsolutePath();
             String currentPath = currentDirectoryPath.toString();
 
-            if (!currentPath.equals("/Users/choichiwon/Jenkins/ThinkBig")) return;
+            if (!currentPath.equals("/Users/choichiwon/Jenkins/ThinkBig"))
+                return;
 
             String dest = cleanFileName + ".png";
             try {
@@ -72,15 +74,17 @@ public class Hook {
         }
     }
 
-
     /**
      * Wi-Fi on/off depending on parameter
+     * 
      * @param onOrOff Wi-Fi Off or On
-     * @throws InvalidParameterException onOrOff parameter value가 'On" 또는 "Off" 둘 다 아닐 때
+     * @throws InvalidParameterException onOrOff parameter value가 'On" 또는 "Off" 둘 다
+     *                                   아닐 때
      */
     @When("Turn {string} WiFi")
     public void toggleWifi(String onOrOff) {
-        if (!onOrOff.equals("On") && !onOrOff.equals("Off")) throw new InvalidParameterException("The parameter 'onOrOff' only available 'On' or 'Off'");
+        if (!onOrOff.equals("On") && !onOrOff.equals("Off"))
+            throw new InvalidParameterException("The parameter 'onOrOff' only available 'On' or 'Off'");
 
         try {
             log.info("Wifi {}", onOrOff);
