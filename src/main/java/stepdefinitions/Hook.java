@@ -60,8 +60,8 @@ public class Hook {
             Path currentDirectoryPath = Paths.get("").toAbsolutePath();
             String currentPath = currentDirectoryPath.toString();
 
-            if (!currentPath.equals("/Users/choichiwon/Jenkins/ThinkBig"))
-                return;
+            // if (!currentPath.equals("/Users/choichiwon/Jenkins/ThinkBig"))
+            // return;
 
             String dest = cleanFileName + ".png";
             try {
