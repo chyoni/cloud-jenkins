@@ -9,7 +9,7 @@ pipeline {
     // ! Jenkins Web에서 지정한 tools
     tools {
         maven 'cwchoiit_m2'
-        // jdk 'cwchoiit_jdk11'
+        jdk 'cwchoiit_jdk11'
     }
     environment {
         // ! Jenkins Web에서 설정한 값
@@ -211,11 +211,9 @@ pipeline {
 
                             // ! background로 실행하기 위해 뒤에 &
                             // ! 실행 후 10초정도 대기
-                            sh ("echo $ANDROID_HOME")
                             sh "appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT} &"
                             sleep 10
                             
-                            sh("appium-doctor --android")
                         } catch(error) {
                             throwableException(map, error)
                         }
