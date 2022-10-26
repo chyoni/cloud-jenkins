@@ -12,6 +12,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.LoggerFactory;
 import utils.AndroidManager;
 import utils.AppProperty;
@@ -53,11 +54,13 @@ public class Hook {
 
         if (scenario.isFailed()) {
             log.info("Current scenario : {} FAILED, take screenshot", scenario.getName().trim());
-
+            String file = ((TakesScreenshot) AndroidManager.getDriver()).getScreenshotAs(OutputType.BASE64);
             String cleanFileName = scenario.getName().trim().replaceAll(" ", "_");
 
-            log.info("OutputType: {}", OutputType.FILE);
-            File file = ((RemoteWebDriver) AndroidManager.getDriver()).getScreenshotAs(OutputType.FILE);
+            // byte[] file =
+            // ((TakesScreenshot)AndroidManager.getDriver()).getScreenshotAs(OutputType.BYTES);
+            byte[] decodedBytes = Base64.decodeBase64(file);
+
             String scrShotDir = "defect_screenshots";
             new File(scrShotDir).mkdirs();
 
@@ -67,12 +70,13 @@ public class Hook {
             // if (!currentPath.equals("/Users/choichiwon/Jenkins/ThinkBig")) return;
 
             String dest = cleanFileName + ".png";
+
             try {
-                // OutputStream stream = new FileOutputStream(scrShotDir + "/" + dest);
-                // stream.write(file);
-                FileUtils.copyFile(file, new File(scrShotDir + "/" + dest));
+                OutputStream stream = new FileOutputStream(scrShotDir + "/" + dest);
+                stream.write(decodedBytes);
+                // FileUtils.copyFile(file, new File(scrShotDir + "/" + dest));
                 log.info("screenshot name: {}", dest);
-                // stream.close();
+                stream.close();
             } catch (IOException e) {
                 log.error("Image not transferred to screenshot folder");
                 e.printStackTrace();
