@@ -521,6 +521,7 @@ def init(def map) {
     map.current_node = null
     map.testcases = [:]
     map.current_path = null
+    // ! 아래 path가 실제 Jenkins에서 실행하는 workplace (그러니까 app.properties 같은것들을 저 path 아래 있는 파일에서 수정하고 해야한다.)
     map.agents_ref = [
         "M2 Pad": "/Users/choichiwon/Jenkins/ThinkBig/",
         "cwchoiit_home": "/Users/cw.choiit/Jenkins/jenkins-thinkbig/",
