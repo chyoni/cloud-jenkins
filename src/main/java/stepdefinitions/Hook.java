@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.AndroidManager;
@@ -57,7 +58,7 @@ public class Hook {
 
             // File file =
             // ((TakesScreenshot)AndroidManager.getDriver()).getScreenshotAs(OutputType.FILE);
-            byte[] file = ((TakesScreenshot) AndroidManager.getDriver()).getScreenshotAs(OutputType.BYTES);
+            byte[] file = ((RemoteWebDriver) AndroidManager.getDriver()).getScreenshotAs(OutputType.BYTES);
             String scrShotDir = "defect_screenshots";
             new File(scrShotDir).mkdirs();
 
