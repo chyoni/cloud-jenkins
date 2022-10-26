@@ -7,10 +7,10 @@ def map = [:]
 pipeline {
     agent any
     // ! Jenkins Web에서 지정한 tools
-    tools {
-        maven 'cwchoiit_m2'
-        jdk 'cwchoiit_jdk11'
-    }
+    // tools {
+    //     maven 'cwchoiit_m2'
+    //     jdk 'cwchoiit_jdk11'
+    // }
     environment {
         LC_ALL = 'ko_KR.UTF-8'
         LANG    = 'ko_KR.UTF-8'
