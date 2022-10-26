@@ -557,7 +557,7 @@ def init(def map) {
     map.const.plan_tests = "customfield_10035"
     // ! Test Plan/Run의 'Tablet Info' field (Multi Select field -> array)
     map.const.test_env = "customfield_10037"
-    map.const.test_plan_issuetype = "Test Plan/Run"
+    map.const.test_plan_issuetype = "Test Plan/Run for Windows"
 
     map.cucumber = [:]
     // ! Test Plan/Run issue의 컴포넌트에서 값이 있다면 이 feature_name에 지정할 것
