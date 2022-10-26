@@ -211,8 +211,8 @@ pipeline {
 
                             // ! background로 실행하기 위해 뒤에 &
                             // ! 실행 후 10초정도 대기
-                            sh "appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT} &"
-                            sleep 10
+                            // sh "appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT} &"
+                            // sleep 10
                             
                         } catch(error) {
                             throwableException(map, error)
@@ -246,8 +246,8 @@ pipeline {
                         try {
                             // ! 테스트가 끝난 후 appium server kill (원래는 이 stage에서만 실행되는 스크립트이기 때문에 이 stage가 끝나면 저절로 appium server가 꺼지긴 한다만, 불예측성 에러를 방지하기 위해 process 직접 종료)
                             // ! lsof -t -i :PORT 가 의미하는건 해당 포트로 할당된 process를 가져오는것
-                            OUTPUT = sh script: "kill \$(lsof -t -i :${APPIUM_PORT})", returnStdout: true
-                            echo OUTPUT
+                            // OUTPUT = sh script: "kill \$(lsof -t -i :${APPIUM_PORT})", returnStdout: true
+                            // echo OUTPUT
 
                             // ! 테스트가 모두 끝나고 생성되는 cucumber.json 파일을 읽어서 map에 저장
                             map.cucumber.result_text = readFile file: map.cucumber.report_json
