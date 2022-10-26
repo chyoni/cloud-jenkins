@@ -17,7 +17,9 @@ import utils.AppProperty;
 import utils.Utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidParameterException;
@@ -53,20 +55,24 @@ public class Hook {
 
             String cleanFileName = scenario.getName().trim().replaceAll(" ", "_");
 
-            File file = ((TakesScreenshot) AndroidManager.getDriver()).getScreenshotAs(OutputType.FILE);
+            // File file =
+            // ((TakesScreenshot)AndroidManager.getDriver()).getScreenshotAs(OutputType.FILE);
+            byte[] file = ((TakesScreenshot) AndroidManager.getDriver()).getScreenshotAs(OutputType.BYTES);
             String scrShotDir = "defect_screenshots";
             new File(scrShotDir).mkdirs();
 
             Path currentDirectoryPath = Paths.get("").toAbsolutePath();
             String currentPath = currentDirectoryPath.toString();
 
-            // if (!currentPath.equals("/Users/choichiwon/Jenkins/ThinkBig"))
-            // return;
+            // if (!currentPath.equals("/Users/choichiwon/Jenkins/ThinkBig")) return;
 
             String dest = cleanFileName + ".png";
             try {
-                FileUtils.copyFile(file, new File(scrShotDir + "/" + dest));
+                OutputStream stream = new FileOutputStream(scrShotDir + "/" + dest);
+                stream.write(file);
+                // FileUtils.copyFile(file, new File(scrShotDir + "/" + dest));
                 log.info("screenshot name: {}", dest);
+                stream.close();
             } catch (IOException e) {
                 log.error("Image not transferred to screenshot folder");
                 e.printStackTrace();
