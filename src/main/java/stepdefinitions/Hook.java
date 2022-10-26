@@ -56,9 +56,8 @@ public class Hook {
 
             String cleanFileName = scenario.getName().trim().replaceAll(" ", "_");
 
-            // File file =
-            // ((TakesScreenshot)AndroidManager.getDriver()).getScreenshotAs(OutputType.FILE);
-            byte[] file = ((RemoteWebDriver) AndroidManager.getDriver()).getScreenshotAs(OutputType.BYTES);
+            log.info("OutputType: {}", OutputType.FILE);
+            File file = ((RemoteWebDriver) AndroidManager.getDriver()).getScreenshotAs(OutputType.FILE);
             String scrShotDir = "defect_screenshots";
             new File(scrShotDir).mkdirs();
 
@@ -69,11 +68,11 @@ public class Hook {
 
             String dest = cleanFileName + ".png";
             try {
-                OutputStream stream = new FileOutputStream(scrShotDir + "/" + dest);
-                stream.write(file);
-                // FileUtils.copyFile(file, new File(scrShotDir + "/" + dest));
+                // OutputStream stream = new FileOutputStream(scrShotDir + "/" + dest);
+                // stream.write(file);
+                FileUtils.copyFile(file, new File(scrShotDir + "/" + dest));
                 log.info("screenshot name: {}", dest);
-                stream.close();
+                // stream.close();
             } catch (IOException e) {
                 log.error("Image not transferred to screenshot folder");
                 e.printStackTrace();
