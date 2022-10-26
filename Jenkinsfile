@@ -12,6 +12,9 @@ pipeline {
         jdk 'cwchoiit_jdk11'
     }
     environment {
+        LC_ALL = 'ko_KR.UTF-8'
+        LANG    = 'ko_KR.UTF-8'
+        LANGUAGE = 'ko_KR.UTF-8'
         // ! Jenkins Web에서 설정한 값
         TBELL_JIRA_CWCHOI = credentials('jira-cloud-cwchoi')
         // ! Jira trigger를 통해 자동으로 받는 값
@@ -211,7 +214,7 @@ pipeline {
 
                             // ! background로 실행하기 위해 뒤에 &
                             // ! 실행 후 10초정도 대기
-                            sh encoding: 'UTF-8' script: "appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT} &"
+                            sh script: "appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT} &"
                             sleep 10
                             
                         } catch(error) {
@@ -234,7 +237,7 @@ pipeline {
                         }
                         try {
                             // ! Run cucumber test command line
-                            sh encoding: 'UTF-8' script: "mvn exec:java -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8 -D exec.mainClass=io.cucumber.core.cli.Main -D exec.args=\"${map.cucumber.feature_path} --glue ${map.cucumber.glue} --plugin json:${map.cucumber.report_json} --plugin progress:${map.cucumber.running_progress} --publish --plugin pretty --plugin html:${map.cucumber.cucumber_html}\""
+                            sh script: "mvn exec:java -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8 -D exec.mainClass=io.cucumber.core.cli.Main -D exec.args=\"${map.cucumber.feature_path} --glue ${map.cucumber.glue} --plugin json:${map.cucumber.report_json} --plugin progress:${map.cucumber.running_progress} --publish --plugin pretty --plugin html:${map.cucumber.cucumber_html}\""
                         } catch(error) {
                             println "automation test error ---> : ${error.getMessage()}"
                         }
