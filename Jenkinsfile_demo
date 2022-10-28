@@ -120,6 +120,8 @@ pipeline {
                         println "testcases count --> : ${map.testcases.size()}"
 
                         bat("echo $ANDROID_HOME")
+                        //콘솔 UTF-8로 변경
+                        bat("chcp 65001")
                         // ! map.testcases에 담긴 각 시나리오를 하나의 feature 파일로 변환 하는 과정에서 
                         // ! 첫 줄의 Feature Name을 지정
                         def feature = (map.cucumber.feature_name != null) ? "Feature: ${map.cucumber.feature_name}\n\n\n" : "Feature: Default\n\n\n"
