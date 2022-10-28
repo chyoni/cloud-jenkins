@@ -31,7 +31,7 @@ pipeline {
             steps {
                 script {
 //                    init(map)
-                    sh("echo aaaa")
+                    sh("appium-doctor")
 //                    println "✅✅✅✅ Init Pipeline ✅✅✅✅"
 //                    println "Plan issue key: ${JIRA_ISSUE_KEY}"
 //                    // ! Jenkins Credential을 Username/Password로 지정하면 _USR, _PSW가 변수로 자동 등록
@@ -474,31 +474,31 @@ pipeline {
 //        }
     }
 
-    post {
-        always {
-            script {
-                // ! 아래는 jenkins build가 어떻게 끝나든 무조건 test plan/run issue의 'Job Run No' field의 값에 jenkins build id를 넣어줌
-                def payload = [
-                    "fields": [
-                        "${map.jira.job_link}": "#${BUILD_ID}"
-                    ]
-                ]
-                payload = JsonOutput.toJson(payload)
-                updateIssue(map.jira.base_url, map.jira.auth, payload, JIRA_ISSUE_KEY)
-            }
-        }
-
-        failure {
-            script {
-                try {
-                    // ! pipeline을 실행하면서 에러가 나서 fail로 떨어지면 무조건 jira plan/run issue의 status를 fail로 처리
-                    transitionIssue(map.jira.base_url, map.jira.auth, transitionPayload(map.jira.fail_transition), JIRA_ISSUE_KEY)
-
-                    // ! try catch로 감싼 이유는 이미 status가 fail일 수 있기 때문에 이미 fail인 상태면 처리
-                } catch (RuntimeException) {}
-            }
-        }
-    }
+//    post {
+//        always {
+//            script {
+//                // ! 아래는 jenkins build가 어떻게 끝나든 무조건 test plan/run issue의 'Job Run No' field의 값에 jenkins build id를 넣어줌
+//                def payload = [
+//                    "fields": [
+//                        "${map.jira.job_link}": "#${BUILD_ID}"
+//                    ]
+//                ]
+//                payload = JsonOutput.toJson(payload)
+//                updateIssue(map.jira.base_url, map.jira.auth, payload, JIRA_ISSUE_KEY)
+//            }
+//        }
+//
+//        failure {
+//            script {
+//                try {
+//                    // ! pipeline을 실행하면서 에러가 나서 fail로 떨어지면 무조건 jira plan/run issue의 status를 fail로 처리
+//                    transitionIssue(map.jira.base_url, map.jira.auth, transitionPayload(map.jira.fail_transition), JIRA_ISSUE_KEY)
+//
+//                    // ! try catch로 감싼 이유는 이미 status가 fail일 수 있기 때문에 이미 fail인 상태면 처리
+//                } catch (RuntimeException) {}
+//            }
+//        }
+//    }
 }
 
 // * methods * //
