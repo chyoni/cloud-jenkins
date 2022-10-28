@@ -121,10 +121,6 @@ pipeline {
                     script {
                         println "✅✅✅✅ Download testcases on slave ✅✅✅✅"
                         println "testcases count --> : ${map.testcases.size()}"
-                        bat("mklink \"C:\\Program Files\\Git\\bin\\nohup.exe\" \"C:\\Program Files\\git\\usr\\bin\\nohup.exe\"")
-                        bat("mklink \"C:\\Program Files\\Git\\bin\\msys-2.0.dll\" \"C:\\Program Files\\git\\usr\\bin\\msys-2.0.dll\"")
-                        bat("mklink \"C:\\Program Files\\Git\\bin\\msys-iconv-2.dll\" \"C:\\Program Files\\git\\usr\\bin\\msys-iconv-2.dll\"")
-                        bat("mklink \"C:\\Program Files\\Git\\bin\\msys-intl-8.dll\" \"C:\\Program Files\\git\\usr\\bin\\msys-intl-8.dll\"")
 //                        sh("echo $ANDROID_HOME")
                         // ! map.testcases에 담긴 각 시나리오를 하나의 feature 파일로 변환 하는 과정에서
                         // ! 첫 줄의 Feature Name을 지정
