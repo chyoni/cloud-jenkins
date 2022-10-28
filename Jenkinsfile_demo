@@ -31,7 +31,7 @@ pipeline {
             steps {
                 script {
 //                    init(map)
-                    sh("ls -al")
+                    sh("appium-doctor")
 //                    println "✅✅✅✅ Init Pipeline ✅✅✅✅"
 //                    println "Plan issue key: ${JIRA_ISSUE_KEY}"
 //                    // ! Jenkins Credential을 Username/Password로 지정하면 _USR, _PSW가 변수로 자동 등록
