@@ -122,7 +122,7 @@ pipeline {
                         println "✅✅✅✅ Download testcases on slave ✅✅✅✅"
                         println "testcases count --> : ${map.testcases.size()}"
 
-                        sh("echo $ANDROID_HOME")
+//                        sh("echo $ANDROID_HOME")
                         // ! map.testcases에 담긴 각 시나리오를 하나의 feature 파일로 변환 하는 과정에서
                         // ! 첫 줄의 Feature Name을 지정
                         def feature = (map.cucumber.feature_name != null) ? "Feature: ${map.cucumber.feature_name}\n\n\n" : "Feature: Default\n\n\n"
