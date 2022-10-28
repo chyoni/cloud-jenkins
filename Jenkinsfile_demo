@@ -524,7 +524,7 @@ def init(def map) {
     map.agents_ref = [
             "M2 Pad": "/Users/choichiwon/Jenkins/ThinkBig/",
             "cwchoiit_home": "/Users/cw.choiit/Jenkins/jenkins-thinkbig/",
-            "SM-T583(Samsung)": "C:\\Users\\TB-NTB-157\\hpm"
+            "SM-T583(Samsung)": "C:\\Users\\TB-NTB-157\\hpm\\workspace"
     ]
 
     map.git = [:]
