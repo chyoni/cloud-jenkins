@@ -7,31 +7,31 @@ def map = [:]
 pipeline {
     agent any
     // ! Jenkins Web에서 지정한 tools
-    tools {
-        maven 'cwchoiit_m2'
-        // jdk 'cwchoiit_jdk11'
-    }
-    environment {
-        // ! Jenkins Web에서 설정한 값
-        TBELL_JIRA_CWCHOI = credentials('jira-cloud-cwchoi')
-        // ! Jira trigger를 통해 자동으로 받는 값
-        JIRA_ISSUE_KEY = "${JIRA_PLAN_ISSUE_KEY}"
-        TBELL_BACKUP_AUTH = credentials('backup_server_tbell')
-        
-        APPIUM_ADDR = "0.0.0.0"
-        APPIUM_PORT = "4723"
-
-        // ! Jenkins Build URL (Jenkins가 자동으로 만들어주는 변수)
-        BUILD_URL = "${BUILD_URL}"
-        // ! Jenkins Build ID (Jenkins가 자동으로 만들어주는 변수)
-        BUILD_ID = "${BUILD_ID}"
-    }
+//    tools {
+//        maven 'cwchoiit_m2'
+//        // jdk 'cwchoiit_jdk11'
+//    }
+//    environment {
+//        // ! Jenkins Web에서 설정한 값
+//        TBELL_JIRA_CWCHOI = credentials('jira-cloud-cwchoi')
+//        // ! Jira trigger를 통해 자동으로 받는 값
+//        JIRA_ISSUE_KEY = "${JIRA_PLAN_ISSUE_KEY}"
+//        TBELL_BACKUP_AUTH = credentials('backup_server_tbell')
+//
+//        APPIUM_ADDR = "0.0.0.0"
+//        APPIUM_PORT = "4723"
+//
+//        // ! Jenkins Build URL (Jenkins가 자동으로 만들어주는 변수)
+//        BUILD_URL = "${BUILD_URL}"
+//        // ! Jenkins Build ID (Jenkins가 자동으로 만들어주는 변수)
+//        BUILD_ID = "${BUILD_ID}"
+//    }
     stages {
         stage("Init") {
             steps {
                 script {
 //                    init(map)
-                    sh("appium-doctor")
+                    sh("ls -al")
 //                    println "✅✅✅✅ Init Pipeline ✅✅✅✅"
 //                    println "Plan issue key: ${JIRA_ISSUE_KEY}"
 //                    // ! Jenkins Credential을 Username/Password로 지정하면 _USR, _PSW가 변수로 자동 등록
