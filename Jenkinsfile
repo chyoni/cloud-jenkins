@@ -12,9 +12,6 @@ pipeline {
     //     jdk 'cwchoiit_jdk11'
     // }
     environment {
-        LC_ALL = 'ko_KR.UTF-8'
-        LANG    = 'ko_KR.UTF-8'
-        LANGUAGE = 'ko_KR.UTF-8'
         // ! Jenkins Web에서 설정한 값
         TBELL_JIRA_CWCHOI = credentials('jira-cloud-cwchoi')
         // ! Jira trigger를 통해 자동으로 받는 값
