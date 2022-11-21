@@ -1,0 +1,81 @@
+Sep 15, 2022 11:54:09 AM hudson.remoting.jnlp.Main createEngine
+INFO: Setting up agent: M2 Pad
+Sep 15, 2022 11:54:09 AM hudson.remoting.jnlp.Main$CuiListener <init>
+INFO: Jenkins agent is running in headless mode.
+Sep 15, 2022 11:54:09 AM hudson.remoting.Engine startEngine
+INFO: Using Remoting version: 4.13.2
+Sep 15, 2022 11:54:09 AM org.jenkinsci.remoting.engine.WorkDirManager initializeWorkDir
+INFO: Using /Users/choichiwon/Jenkins/ThinkBig/remoting as a remoting work directory
+Sep 15, 2022 11:54:09 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: WebSocket connection open
+Sep 15, 2022 11:54:09 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: Connected
+Sep 15, 2022 11:54:16 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: Write side closed
+Sep 15, 2022 11:54:16 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: Read side closed
+Sep 15, 2022 11:54:16 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: Terminated
+Sep 15, 2022 11:54:16 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: Read side closed
+Sep 15, 2022 11:54:16 AM hudson.remoting.Request$2 run
+INFO: Failed to send back a reply to the request UserRequest:hudson.node_monitors.ArchitectureMonitor$GetArchTask@31cc7906: hudson.remoting.ChannelClosedException: Channel "hudson.remoting.Channel@68760b2e:M2 Pad": channel is already closed
+Sep 15, 2022 11:54:16 AM hudson.remoting.Request$2 run
+INFO: Failed to send back a reply to the request UserRequest:hudson.node_monitors.SwapSpaceMonitor$MonitorTask@79150542: hudson.remoting.ChannelClosedException: Channel "hudson.remoting.Channel@68760b2e:M2 Pad": channel is already closed
+Sep 15, 2022 11:54:16 AM hudson.remoting.Request$2 run
+INFO: Failed to send back a reply to the request UserRequest:hudson.model.Slave$GetClockDifference1@6e5d5910: hudson.remoting.ChannelClosedException: Channel "hudson.remoting.Channel@68760b2e:M2 Pad": channel is already closed
+Sep 15, 2022 11:54:16 AM hudson.remoting.Request$2 run
+INFO: Failed to send back a reply to the request UserRequest:hudson.FilePath$CallableWith@2c181fe9: hudson.remoting.ChannelClosedException: Channel "hudson.remoting.Channel@68760b2e:M2 Pad": channel is already closed
+Sep 15, 2022 11:54:16 AM hudson.remoting.Request$2 run
+INFO: Failed to send back a reply to the request UserRequest:hudson.node_monitors.ResponseTimeMonitor$Step1@3b35637: hudson.remoting.ChannelClosedException: Channel "hudson.remoting.Channel@68760b2e:M2 Pad": channel is already closed
+Sep 15, 2022 11:54:16 AM hudson.remoting.Request$2 run
+INFO: Failed to send back a reply to the request UserRequest:hudson.FilePath$CallableWith@4d998789: hudson.remoting.ChannelClosedException: Channel "hudson.remoting.Channel@68760b2e:M2 Pad": channel is already closed
+Sep 15, 2022 11:54:16 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: Read side closed
+Sep 15, 2022 11:54:17 AM hudson.remoting.UserRequest perform
+WARNING: LinkageError while performing UserRequest:jenkins.slaves.restarter.JnlpSlaveRestarterInstaller$FindEffectiveRestarters@2c43751
+java.lang.NoClassDefFoundError: jenkins/slaves/restarter/JnlpSlaveRestarterInstaller$EngineListenerAdapterImpl
+	at jenkins.slaves.restarter.JnlpSlaveRestarterInstaller$FindEffectiveRestarters.call(JnlpSlaveRestarterInstaller.java:93)
+	at jenkins.slaves.restarter.JnlpSlaveRestarterInstaller$FindEffectiveRestarters.call(JnlpSlaveRestarterInstaller.java:72)
+	at hudson.remoting.UserRequest.perform(UserRequest.java:211)
+	at hudson.remoting.UserRequest.perform(UserRequest.java:54)
+	at hudson.remoting.Request$2.run(Request.java:376)
+	at hudson.remoting.InterceptingExecutorService.lambda$wrap$0(InterceptingExecutorService.java:78)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at hudson.remoting.Engine$1.lambda$newThread$0(Engine.java:126)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: java.lang.ClassNotFoundException: jenkins.slaves.restarter.JnlpSlaveRestarterInstaller$EngineListenerAdapterImpl
+	at java.base/java.net.URLClassLoader.findClass(URLClassLoader.java:476)
+	at hudson.remoting.RemoteClassLoader.findClass(RemoteClassLoader.java:220)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:589)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:522)
+	... 11 more
+
+Sep 15, 2022 11:54:17 AM hudson.remoting.Request$2 run
+INFO: Failed to send back a reply to the request UserRequest:jenkins.slaves.restarter.JnlpSlaveRestarterInstaller$FindEffectiveRestarters@2c43751: hudson.remoting.ChannelClosedException: Channel "hudson.remoting.Channel@68760b2e:M2 Pad": channel is already closed
+Sep 15, 2022 11:54:17 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: Performing onReconnect operation.
+Sep 15, 2022 11:54:17 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: onReconnect operation completed.
+Sep 15, 2022 11:54:17 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: WebSocket connection open
+Sep 15, 2022 11:54:17 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: Connected
+Sep 15, 2022 11:54:54 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: Write side closed
+Sep 15, 2022 11:54:54 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: Read side closed
+Sep 15, 2022 11:54:54 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: Read side closed
+Sep 15, 2022 11:54:54 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: Terminated
+Sep 15, 2022 11:54:54 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: Read side closed
+Sep 15, 2022 11:54:54 AM hudson.remoting.Request$2 run
+INFO: Failed to send back a reply to the request UserRequest:org.jenkinsci.plugins.gitclient.Git$GitAPIMasterToSlaveFileCallable@7051effc: hudson.remoting.ChannelClosedException: Channel "hudson.remoting.Channel@738301e8:M2 Pad": channel is already closed
+Sep 15, 2022 11:54:54 AM hudson.remoting.jnlp.Main$CuiListener status
+INFO: Performing onReconnect operation.
+Sep 15, 2022 11:54:54 AM jenkins.slaves.restarter.JnlpSlaveRestarterInstaller$EngineListenerAdapterImpl onReconnect
+INFO: Restarting agent via jenkins.slaves.restarter.UnixSlaveRestarter@34c88c2d

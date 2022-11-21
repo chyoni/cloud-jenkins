@@ -1009,6 +1009,7 @@ Feature: Viewer feature
     And 하단바 반복 버튼 클릭
     Then "음원 반복을 해제합니다" 문구가 담긴 토스트 팝업 노출 확인
     And Next page 7번 실행
+    And 5초 대기
     Then 반복 실행 수행 되지 않음 확인
 
   Scenario: 오디오이북 배속 버튼 동작 확인 (viewer_051)

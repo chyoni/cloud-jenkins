@@ -3026,8 +3026,9 @@ public class PlayerViewStepDefine {
         try {
             log.info("연속재생 리스트 노출 시 딤 부분 클릭");
             // ! 레이아웃이 window 위로 올라오면 driver가 dimension을 못 구하는 이상한 현상이 자꾸 발생해서 좌표를 그냥 찍음
-            TouchAction<?> touchAction = new TouchAction<>(AndroidManager.getDriver());
-            touchAction.press(PointOption.point(972,581)).perform();
+//            TouchAction<?> touchAction = new TouchAction<>(AndroidManager.getDriver());
+//            touchAction.press(PointOption.point(1866,50)).perform();
+                Utils.touchCenterInViewer(AndroidManager.getDriver());
         } catch (NoSuchElementException e) {
             fail("Element you found not shown");
         } catch (Exception e) {
@@ -3060,11 +3061,9 @@ public class PlayerViewStepDefine {
         try {
             log.info("연속재생 로딩 화면 확인");
             try {
-                WebElement element = AndroidManager.getWait(2).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("android.widget.ProgressBar")));
-                if (element.isDisplayed()) assertTrue(true);
-//                WebElement l3 = AndroidManager.getElementById(Constant.ivLoadingImage_id);
-//                WebElement l4 = AndroidManager.getElementById(Constant.tvLoadingText_id);
-//                if (l3.isDisplayed() || l4.isDisplayed()) assertTrue(true);
+//                WebElement element = AndroidManager.getWait(2).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("android.widget.ProgressBar")));
+//                if (element.isDisplayed()) assertTrue(true);
+
             } catch (Exception e2) {
                 fail("로딩 이미지 및 로딩 문구가 노출되지 않았습니다.");
             }
