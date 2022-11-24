@@ -204,7 +204,8 @@ pipeline {
                     script {
                         println "✅✅✅✅ Run automation testing ✅✅✅✅"
                         println "source location ==> ${map.current_path}"
-
+                        println "source location ==> ${APPIUM_PORT}"
+                        sh("echo $APPIUM_PORT")
                         try {
                             // ! Start appium server
                             // ! Real device로 테스트하기 때문에 0.0.0.0 으로 실행시켜야 한다.
