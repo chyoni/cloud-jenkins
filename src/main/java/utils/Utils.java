@@ -475,10 +475,15 @@ public class Utils {
                     System.out.println(">>>>>>>>>>>>>" + line);
                     if (result.contains("started")) {
                         return true;
-                    } if(result.contains("paused")) {
+                    }
+                    if(result.contains("paused")) {
+                        return false;
+                    }
+                    if(result.contains("stopped")) {
                         return false;
                     }
                 } else {
+                    if ((line = reader.readLine()) != null) continue;
                     throw new RuntimeException("String 'state:' not found");
                 }
             }
