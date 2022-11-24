@@ -520,8 +520,8 @@ def init(def map) {
     map.current_path = null
     // ! 아래 path가 실제 Jenkins에서 실행하는 workplace (그러니까 app.properties 같은것들을 저 path 아래 있는 파일에서 수정하고 해야한다.)
     map.agents_ref = [
-        "M2 Pad": "/Users/choichiwon/wjcicd/m2pad",
-        "T500": "/Users/choichiwon/wjcicd/t500",
+        "m2pad": "/Users/choichiwon/wjcicd/m2pad",
+        "t500": "/Users/choichiwon/wjcicd/t500",
         "cwchoiit_home": "/Users/cw.choiit/Jenkins/jenkins-thinkbig/",
         "SM-T583(Samsung)": "C:\\Users\\TB-NTB-157\\hpm"
     ]
