@@ -19,7 +19,7 @@ pipeline {
         TBELL_BACKUP_AUTH = credentials('backup_server_tbell')
         
         APPIUM_ADDR = "0.0.0.0"
-        APPIUM_PORT = "4723"
+        //APPIUM_PORT = "4723"
 
         // ! Jenkins Build URL (Jenkins가 자동으로 만들어주는 변수)
         BUILD_URL = "${BUILD_URL}"
