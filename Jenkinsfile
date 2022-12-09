@@ -7,11 +7,11 @@ def map = [:]
 pipeline {
     agent any
     // ! Jenkins Web에서 지정한 tools
-    tools {
-        // maven 'cwchoiit_m2'
-        // jdk 'cwchoiit_jdk11'
-        git 'remote_git'
-    }
+    // tools {
+    //     maven 'cwchoiit_m2'
+    //     jdk 'cwchoiit_jdk11'
+    //     git 'remote_git'
+    // }
     environment {
         // ! Jenkins Web에서 설정한 값
         TBELL_JIRA_CWCHOI = credentials('jira-cloud-cwchoi')
