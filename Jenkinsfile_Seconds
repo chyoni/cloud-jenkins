@@ -129,6 +129,9 @@ pipeline {
                         // ! JIRA에 올라가 있는 scenario를 가져와서 description으로 해당 JIRA issue key를 붙여준다.
                         // ! issue key를 붙여주는 이유는 해당 시나리오가 JIRA에 어떤 issue와 매핑되는지 알기 위함
                         map.testcases.each { key, value ->
+                            println key
+                            println value
+                            
                             def addedDescription = null
                             if (value.contains("\r\n")) {
                                 addedDescription = value.replaceFirst("\r\n", ("\r\n" + key + "\n\n"))
