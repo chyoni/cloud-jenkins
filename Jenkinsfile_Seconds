@@ -234,66 +234,82 @@ pipeline {
                     script {
                         println "✅✅✅✅ Run automation testing ✅✅✅✅"
                         println "source location ==> ${map.current_path}"
-                        println "source location ==> ${APPIUM_PORT}"
-                        sh("echo $APPIUM_PORT")
+                        println "appium port ==> ${APPIUM_PORT}"
                         try {
-                            // ! Start appium server
-                            // ! Real device로 테스트하기 때문에 0.0.0.0 으로 실행시켜야 한다.
+                            map.testcases.each { key, value -> 
+                                sh script: "appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT} &"
+                                sleep 3
 
-                            // ! background로 실행하기 위해 뒤에 &
-                            // ! 실행 후 10초정도 대기
-                            sh script: "appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT} &"
-                            sleep 10
+                                try {
+                                    // ! Run cucumber test command line
+                                    sh script: "mvn exec:java -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8 -D exec.mainClass=io.cucumber.core.cli.Main -D exec.args=\"${map.cucumber.feature_path}/${key} --glue ${map.cucumber.glue} --plugin json:${map.cucumber.report_json} --plugin progress:${map.cucumber.running_progress} --publish --plugin pretty --plugin html:${map.cucumber.cucumber_html}\""
+                                } catch(error) {
+                                    println "automation test error ---> : ${error.getMessage()}"
+                                }
+                                OUTPUT = sh script: "kill \$(lsof -t -i :${APPIUM_PORT})", returnStdout: true
+                                echo OUTPUT    
+                            }
+                        } catch (error) {
+                            println(error)
+                        }
+                        // try {
+                        //     // ! Start appium server
+                        //     // ! Real device로 테스트하기 때문에 0.0.0.0 으로 실행시켜야 한다.
+
+                        //     // ! background로 실행하기 위해 뒤에 &
+                        //     // ! 실행 후 10초정도 대기
+                        //     sh script: "appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT} &"
+                        //     sleep 10
                             
-                        } catch(error) {
-                            throwableException(map, error)
-                        }
+                        // } catch(error) {
+                        //     throwableException(map, error)
+                        // }
 
-                        // ! 기존 defect_screenshot 폴더와 파일을 삭제
-                        if (fileExists("${map.cucumber.defect_screenshot_path}")) {
-                            sh("rm -rf ${map.cucumber.defect_screenshot_path}")
-                        }
+                        // // ! 기존 defect_screenshot 폴더와 파일을 삭제
+                        // if (fileExists("${map.cucumber.defect_screenshot_path}")) {
+                        //     sh("rm -rf ${map.cucumber.defect_screenshot_path}")
+                        // }
 
-                        // ! 기존 report json 파일을 삭제
-                        if (fileExists("${map.cucumber.report_json}")) {
-                            sh("rm -rf ${map.cucumber.report_json}")
-                        }
+                        // // ! 기존 report json 파일을 삭제
+                        // if (fileExists("${map.cucumber.report_json}")) {
+                        //     sh("rm -rf ${map.cucumber.report_json}")
+                        // }
 
-                        // ! 기존 log_path 파일과 폴더를 삭제
-                        if (fileExists("${map.cucumber.log_path}")) {
-                            sh("rm -rf ${map.cucumber.log_path}")
-                        }
-                        try {
-                            // ! Run cucumber test command line
-                            sh script: "mvn exec:java -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8 -D exec.mainClass=io.cucumber.core.cli.Main -D exec.args=\"${map.cucumber.feature_path} --glue ${map.cucumber.glue} --plugin json:${map.cucumber.report_json} --plugin progress:${map.cucumber.running_progress} --publish --plugin pretty --plugin html:${map.cucumber.cucumber_html}\""
-                        } catch(error) {
-                            println "automation test error ---> : ${error.getMessage()}"
-                        }
+                        // // ! 기존 log_path 파일과 폴더를 삭제
+                        // if (fileExists("${map.cucumber.log_path}")) {
+                        //     sh("rm -rf ${map.cucumber.log_path}")
+                        // }
+                        // try {
+                        //     // ! Run cucumber test command line
+                        //     sh script: "mvn exec:java -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8 -D exec.mainClass=io.cucumber.core.cli.Main -D exec.args=\"${map.cucumber.feature_path} --glue ${map.cucumber.glue} --plugin json:${map.cucumber.report_json} --plugin progress:${map.cucumber.running_progress} --publish --plugin pretty --plugin html:${map.cucumber.cucumber_html}\""
+                        // } catch(error) {
+                        //     println "automation test error ---> : ${error.getMessage()}"
+                        // }
                     }
                 }
 
-                dir("${map.current_path}") {
-                    script {
-                        try {
-                            // ! 테스트가 끝난 후 appium server kill (원래는 이 stage에서만 실행되는 스크립트이기 때문에 이 stage가 끝나면 저절로 appium server가 꺼지긴 한다만, 불예측성 에러를 방지하기 위해 process 직접 종료)
-                            // ! lsof -t -i :PORT 가 의미하는건 해당 포트로 할당된 process를 가져오는것
-                            OUTPUT = sh script: "kill \$(lsof -t -i :${APPIUM_PORT})", returnStdout: true
-                            echo OUTPUT
+                // dir("${map.current_path}") {
+                //     script {
+                //         try {
+                //             // ! 테스트가 끝난 후 appium server kill (원래는 이 stage에서만 실행되는 스크립트이기 때문에 이 stage가 끝나면 저절로 appium server가 꺼지긴 한다만, 불예측성 에러를 방지하기 위해 process 직접 종료)
+                //             // ! lsof -t -i :PORT 가 의미하는건 해당 포트로 할당된 process를 가져오는것
+                //             OUTPUT = sh script: "kill \$(lsof -t -i :${APPIUM_PORT})", returnStdout: true
+                //             echo OUTPUT
 
-                            // ! 테스트가 모두 끝나고 생성되는 cucumber.json 파일을 읽어서 map에 저장
-                            map.cucumber.result_text = readFile file: map.cucumber.report_json
-                        } catch (NoSuchFileException) {
-                            throwableException(map, NoSuchFileException)
-                        } catch (Exception) {
-                            throwableException(map, Exception)
-                        }
+                //             // ! 테스트가 모두 끝나고 생성되는 cucumber.json 파일을 읽어서 map에 저장
+                //             map.cucumber.result_text = readFile file: map.cucumber.report_json
+                //         } catch (NoSuchFileException) {
+                //             throwableException(map, NoSuchFileException)
+                //         } catch (Exception) {
+                //             throwableException(map, Exception)
+                //         }
 
-                        // ! Test가 정상 수행되어서 report 파일이 생성되었다면 적어도 사이즈가 0은 될 수 없음
-                        if (map.cucumber.result_text == null || map.cucumber.result_text.isEmpty()) {
-                            jenkinsException(map, "Reports file was created, but file is empty")
-                        }
-                    }
-                }
+                //         // ! Test가 정상 수행되어서 report 파일이 생성되었다면 적어도 사이즈가 0은 될 수 없음
+                //         if (map.cucumber.result_text == null || map.cucumber.result_text.isEmpty()) {
+                //             jenkinsException(map, "Reports file was created, but file is empty")
+                //         }
+                //     }
+                // }
             }
         }
 
