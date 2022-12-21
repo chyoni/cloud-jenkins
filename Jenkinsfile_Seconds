@@ -238,7 +238,7 @@ pipeline {
                         try {
                             map.testcases.each { key, value -> 
                                 sh script: "appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT} &"
-                                sleep 3
+                                sleep 2
 
                                 try {
                                     // ! Run cucumber test command line
@@ -444,23 +444,23 @@ pipeline {
             }
         }
 
-    //     stage("Attached defect screenshots") {
-    //         agent { label "${map.current_node}" }
-    //         steps {
-    //             dir("${map.current_path}") {
-    //                 script {
-    //                     println "✅✅✅✅ Attached defect screenshots or bypass ✅✅✅✅"
+        stage("Attached defect screenshots") {
+            agent { label "${map.current_node}" }
+            steps {
+                dir("${map.current_path}") {
+                    script {
+                        println "✅✅✅✅ Attached defect screenshots or bypass ✅✅✅✅"
 
-    //                     if (map.cucumber.defect_info.size() > 0) {
-    //                         // ! cURL로 각 defect issue에 맞는 defect screenshot을 업로드한다.
-    //                         map.cucumber.defect_info.each { key, value ->
-    //                             sh script: "curl -D- -u ${map.jira.auth_user} -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@${map.cucumber.defect_screenshot_path}/${value}.png' ${map.jira.base_url}/rest/api/3/issue/${key}/attachments", returnStdout: false
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
+                        if (map.cucumber.defect_info.size() > 0) {
+                            // ! cURL로 각 defect issue에 맞는 defect screenshot을 업로드한다.
+                            map.cucumber.defect_info.each { key, value ->
+                                sh script: "curl -D- -u ${map.jira.auth_user} -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@${map.cucumber.defect_screenshot_path}/${value}.png' ${map.jira.base_url}/rest/api/3/issue/${key}/attachments", returnStdout: false
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
     //     stage("Generate cucumber html reports") {
     //         agent { label "${map.current_node}" }
