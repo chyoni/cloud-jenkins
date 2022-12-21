@@ -501,7 +501,7 @@ pipeline {
                             map.cucumber.defect_info.each { key, value ->
                                 map.testcases.each { tcKey, tcValue -> 
                                     println "outer : ${key}  /  ${value}, inner : ${tcKey}  /  ${tcValue}"
-                                    if (tcValue.contains(value)) {
+                                    if (tcValue.replaceAll(" ", "_").contains(value)) {
                                         sh("curl -D- -u ${map.jira.auth_user} -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@./a_features/${tcKey}/${map.cucumber.cucumber_html}' ${map.jira.base_url}/rest/api/3/issue/${key}/attachments")
                                     }
                                 }
