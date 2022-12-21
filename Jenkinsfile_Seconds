@@ -242,7 +242,7 @@ pipeline {
 
                                 try {
                                     // ! Run cucumber test command line
-                                    sh script: "mvn exec:java -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8 -D exec.mainClass=io.cucumber.core.cli.Main -D exec.args=\"${map.cucumber.feature_path}/${key} --glue ${map.cucumber.glue} --plugin json:${map.cucumber.report_json} --plugin progress:${map.cucumber.running_progress} --publish --plugin pretty --plugin html:${map.cucumber.cucumber_html}\""
+                                    sh script: "mvn exec:java -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8 -D exec.mainClass=io.cucumber.core.cli.Main -D exec.args=\"${map.cucumber.feature_path}/${key} --glue ${map.cucumber.glue} --plugin json:./a_features/${key}/${map.cucumber.report_json} --plugin progress:./a_features/${key}/${map.cucumber.running_progress} --publish --plugin pretty --plugin html:./a_features/${key}/${map.cucumber.cucumber_html}\""
                                 } catch(error) {
                                     println "automation test error ---> : ${error.getMessage()}"
                                 }
