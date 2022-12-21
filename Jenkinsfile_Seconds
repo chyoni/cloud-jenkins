@@ -135,6 +135,8 @@ pipeline {
 
                         // for (def result in clearResult) {
                         map.testcases.each { key, value ->
+                            println key
+                            println value
                             def feature = (map.cucumber.feature_name != null) ? "Feature: ${map.cucumber.feature_name}\n\n\n" : "Feature: Default\n\n\n"
                         
                             sh script: """ mkdir "${map.cucumber.feature_path}/${key}" """, returnStdout: false
@@ -494,14 +496,12 @@ pipeline {
                         
                         // ! test plan/run 이슈의 attachment로 cucumber report를 올림 이 파일은 jenkins의 plugin인 cucumber-report가 아니고 cucumber runner를 실행할 때 실행 후 만들어지는 html 파일임
                         // ! 이렇게 하는 이유는 Jenkins 권한을 가지지 않은 사람이 있는 경우 위에 URL에 접근이 불가능하므로
-                        if (map.cucumber.defect_info.size() > 0) {
-                            // ! cURL로 각 defect issue에 맞는 defect screenshot을 업로드한다.
-                            map.cucumber.defect_info.each { key, value ->
-                                println key
-                                println value
-                            }
-                        }
-                        //sh("curl -D- -u ${map.jira.auth_user} -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@${map.cucumber.cucumber_html}' ${map.jira.base_url}/rest/api/3/issue/${JIRA_ISSUE_KEY}/attachments")
+                        // if (map.cucumber.defect_info.size() > 0) {
+                        //     // ! cURL로 각 defect issue에 맞는 defect screenshot을 업로드한다.
+                        //     map.cucumber.defect_info.each { key, value ->
+                        //         sh("curl -D- -u ${map.jira.auth_user} -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@./a_features/${tcKey}/${map.cucumber.cucumber_html}' ${map.jira.base_url}/rest/api/3/issue/${key}/attachments")
+                        //     }
+                        // }
                     }
                 }
             } 
