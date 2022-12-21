@@ -313,132 +313,136 @@ pipeline {
             }
         }
 
-    //     stage("Analysis test result") {
-    //         agent { label "${map.current_node}" }
-    //         steps {
-    //             dir("${map.current_path}") {
-    //                 script {
-    //                     println "✅✅✅✅ Analysis test result ✅✅✅✅"
+        stage("Analysis test result") {
+            agent { label "${map.current_node}" }
+            steps {
+                dir("${map.current_path}") {
+                    script {
+                        println "✅✅✅✅ Analysis test result ✅✅✅✅"
                         
-    //                     try {
-    //                         // ! 테스트 후 생성된 cucumber.json 파일을 가져온다.
-    //                         map.cucumber.result_json = readFile file: map.cucumber.report_json
-    //                         // ! 가져온 cucumber.json 파일을 parsing
-    //                         def results = new JsonSlurper().parseText(map.cucumber.result_json as String)
+                        try {
 
-    //                         def clearResult = results[0].elements
-    //                         def isPassed = true
-    //                         def currentIssue = null
-    //                         def scenarioName = null
+                            def isPassed = true
 
-    //                         for (def result in clearResult) {
-    //                             // ! description에는 반드시 해당 jira issue key값이 들어있어야 한다. 상위 stage에서 이 부분을 처리해줬음
-    //                             if (result.description == "") {
-    //                                 jenkinsException(map, "Scenario description (Issue key) required.")
-    //                             }
-    //                             currentIssue = result.description.trim()
+                            map.testcases.each { key, value -> 
+                                // ! 테스트 후 생성된 cucumber.json 파일을 가져온다.
+                                map.cucumber.result_json = readFile file: "./a_features/${key}/${map.cucumber.report_json}"
+                                // ! 가져온 cucumber.json 파일을 parsing
+                                def results = new JsonSlurper().parseText(map.cucumber.result_json as String)
 
-    //                             // ! 테스트 Scenario의 name
-    //                             scenarioName = result.name.trim().replaceAll(" ", "_")
-    //                             println "defect screenshot name --> ${scenarioName}"
+                                def clearResult = results[0].elements    
+                                def currentIssue = null
+                                def scenarioName = null
 
-    //                             // ! 테스트 Scenario의 before, after step의 result
-    //                             def before = result.before[0].result
-    //                             def after = result.after[0].result
+                                for (def result in clearResult) {
+                                    // ! description에는 반드시 해당 jira issue key값이 들어있어야 한다. 상위 stage에서 이 부분을 처리해줬음
+                                    if (result.description == "") {
+                                        jenkinsException(map, "Scenario description (Issue key) required.")
+                                    }
+                                    currentIssue = result.description.trim()
 
-    //                             if (!before.status.contains("passed")) {
-    //                                 map.cucumber.error_message = before.error_message
-    //                                 isPassed = false
-    //                                 // ! create defect issue 
-    //                                 def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
-    //                                     "Defect of test '${currentIssue}'",
-    //                                     map.cucumber.error_message,
-    //                                     map.jira.defect_issuetype)
-    //                                     )
-                                    
-    //                                 // ! 추후 stage에서 screenshot을 attach할 때 필요한 정보들 
-    //                                 map.cucumber.defect_info.put(res.key, scenarioName)
+                                    // ! 테스트 Scenario의 name
+                                    scenarioName = result.name.trim().replaceAll(" ", "_")
+                                    println "defect screenshot name --> ${scenarioName}"
 
-    //                                 // ! Plan/Run linked with Bug
-    //                                 linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
-    //                                 // ! Bug linked with Test case
-    //                                 linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
-    //                                 // ! continue 처리를 하는 이유는 passed가 아닌 이후부터는 모든 step이 skipped 상태이기 때문에 문제가 발생한 스텝에서의 에러를 defect로 생성하고 다음 scenario로 넘어가면 됨
-    //                                 continue
-    //                             }
+                                    // ! 테스트 Scenario의 before, after step의 result
+                                    def before = result.before[0].result
+                                    def after = result.after[0].result
 
-    //                             if (!after.status.contains("passed")) {
-    //                                 map.cucumber.error_message = after.error_message
-    //                                 isPassed = false
-    //                                 def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
-    //                                     "Defect of test '${currentIssue}'",
-    //                                     map.cucumber.error_message,
-    //                                     map.jira.defect_issuetype)
-    //                                     )
-    //                                 // ! Plan/Run linked with Bug
-    //                                 linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
-    //                                 // ! Bug linked with Test case
-    //                                 linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
-    //                                 continue
-    //                             }
-                                
-    //                             for (def step in result.steps) {
-    //                                 def eachStep = step.result
-    //                                 if (!eachStep.status.contains("passed")) {
-    //                                     map.cucumber.error_message = eachStep.error_message
-    //                                     if (map.cucumber.error_message == null || map.cucumber.error_message == "") {
-    //                                         // ! undefined은 error_message가 없어서 직접 처리해줘야 함. undefined은 해당 step이 implement되지 않았을 때 발생함
-    //                                         if (eachStep.status.contains("undefined")) {
-    //                                             isPassed = false
-    //                                             def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
-    //                                             "Defect of test '${currentIssue}'",
-    //                                             "step '${step.name}'의 step definition이 정의되지 않았습니다.", map.jira.defect_issuetype)
-    //                                             )
-
-    //                                             // ! Plan/Run linked with Bug
-    //                                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
-    //                                             // ! Bug linked with Test case
-    //                                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
-    //                                             // ! 역시 마찬가지로 passed가 아닌 무언가 (undefined, failed) 생긴 이후 step은 다 skipped임 그래서 이 for문을 빠져나가면 됨
-    //                                             break
-    //                                         } else {
-    //                                             // ! error_message가 없고 undefined가 아니면 skipped인 경우밖에 없음 근데 skipped인 경우가 loop에서 나오면 안됨 (skipped가 나오기전에 빠져나오는 로직을 실행하기 때문에)
-    //                                             jenkinsException(map, "error message is empty")
-    //                                         }
-    //                                     }
-    //                                     isPassed = false
-    //                                     def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
-    //                                     "Defect of test '${currentIssue}'",
-    //                                     map.cucumber.error_message,
-    //                                     map.jira.defect_issuetype)
-    //                                     )
+                                    if (!before.status.contains("passed")) {
+                                        map.cucumber.error_message = before.error_message
+                                        isPassed = false
+                                        // ! create defect issue 
+                                        def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
+                                            "Defect of test '${currentIssue}'",
+                                            map.cucumber.error_message,
+                                            map.jira.defect_issuetype)
+                                            )
                                         
-    //                                     // ! 추후 stage에서 screenshot을 attach할 때 필요한 정보들 
-    //                                     map.cucumber.defect_info.put(res.key, scenarioName)
+                                        // ! 추후 stage에서 screenshot을 attach할 때 필요한 정보들 
+                                        map.cucumber.defect_info.put(res.key, scenarioName)
 
-    //                                     // ! Plan/Run linked with Bug
-    //                                     linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
-    //                                     // ! Bug linked with Test case
-    //                                     linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
-    //                                     break
-    //                                 }
-    //                             }
-    //                         }
+                                        // ! Plan/Run linked with Bug
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
+                                        // ! Bug linked with Test case
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
+                                        // ! continue 처리를 하는 이유는 passed가 아닌 이후부터는 모든 step이 skipped 상태이기 때문에 문제가 발생한 스텝에서의 에러를 defect로 생성하고 다음 scenario로 넘어가면 됨
+                                        continue
+                                    }
+
+                                    if (!after.status.contains("passed")) {
+                                        map.cucumber.error_message = after.error_message
+                                        isPassed = false
+                                        def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
+                                            "Defect of test '${currentIssue}'",
+                                            map.cucumber.error_message,
+                                            map.jira.defect_issuetype)
+                                            )
+                                        // ! Plan/Run linked with Bug
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
+                                        // ! Bug linked with Test case
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
+                                        continue
+                                    }
+                                    
+                                    for (def step in result.steps) {
+                                        def eachStep = step.result
+                                        if (!eachStep.status.contains("passed")) {
+                                            map.cucumber.error_message = eachStep.error_message
+                                            if (map.cucumber.error_message == null || map.cucumber.error_message == "") {
+                                                // ! undefined은 error_message가 없어서 직접 처리해줘야 함. undefined은 해당 step이 implement되지 않았을 때 발생함
+                                                if (eachStep.status.contains("undefined")) {
+                                                    isPassed = false
+                                                    def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
+                                                    "Defect of test '${currentIssue}'",
+                                                    "step '${step.name}'의 step definition이 정의되지 않았습니다.", map.jira.defect_issuetype)
+                                                    )
+
+                                                    // ! Plan/Run linked with Bug
+                                                    linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
+                                                    // ! Bug linked with Test case
+                                                    linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
+                                                    // ! 역시 마찬가지로 passed가 아닌 무언가 (undefined, failed) 생긴 이후 step은 다 skipped임 그래서 이 for문을 빠져나가면 됨
+                                                    break
+                                                } else {
+                                                    // ! error_message가 없고 undefined가 아니면 skipped인 경우밖에 없음 근데 skipped인 경우가 loop에서 나오면 안됨 (skipped가 나오기전에 빠져나오는 로직을 실행하기 때문에)
+                                                    jenkinsException(map, "error message is empty")
+                                                }
+                                            }
+                                            isPassed = false
+                                            def res = createIssue(map.jira.base_url, map.jira.auth, createBugPayload(map.jira.project_key,
+                                            "Defect of test '${currentIssue}'",
+                                            map.cucumber.error_message,
+                                            map.jira.defect_issuetype)
+                                            )
+                                            
+                                            // ! 추후 stage에서 screenshot을 attach할 때 필요한 정보들 
+                                            map.cucumber.defect_info.put(res.key, scenarioName)
+
+                                            // ! Plan/Run linked with Bug
+                                            linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(JIRA_ISSUE_KEY, res.key, map.jira.defect_link))
+                                            // ! Bug linked with Test case
+                                            linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, currentIssue, map.jira.tests_link))
+                                            break
+                                        }
+                                    }
+                                }
+                            }
                             
-    //                         if (isPassed) {
-    //                             // ! 이 statement가 실행되는 경우는 모든 step이 다 passed 될 경우임 그래서 test plan/run issue를 finish 상태로 변경
-    //                             transitionIssue(map.jira.base_url, map.jira.auth, transitionPayload(map.jira.success_transition), JIRA_ISSUE_KEY)
-    //                         } else {
-    //                             // ! 이 statement가 실행되는 경우는 모든 시나리오 중 하나라도 passed가 이루어지지 않은 시나리오가 있다면 실행됨 test plan/run issue를 test fail 상태로 변경
-    //                             transitionIssue(map.jira.base_url, map.jira.auth, transitionPayload(map.jira.fail_transition), JIRA_ISSUE_KEY)
-    //                         }
-    //                     } catch (error) {
-    //                         throwableException(map, error)
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
+                            if (isPassed) {
+                                // ! 이 statement가 실행되는 경우는 모든 step이 다 passed 될 경우임 그래서 test plan/run issue를 finish 상태로 변경
+                                transitionIssue(map.jira.base_url, map.jira.auth, transitionPayload(map.jira.success_transition), JIRA_ISSUE_KEY)
+                            } else {
+                                // ! 이 statement가 실행되는 경우는 모든 시나리오 중 하나라도 passed가 이루어지지 않은 시나리오가 있다면 실행됨 test plan/run issue를 test fail 상태로 변경
+                                transitionIssue(map.jira.base_url, map.jira.auth, transitionPayload(map.jira.fail_transition), JIRA_ISSUE_KEY)
+                            }
+                        } catch (error) {
+                            throwableException(map, error)
+                        }
+                    }
+                }
+            }
+        }
 
     //     stage("Attached defect screenshots") {
     //         agent { label "${map.current_node}" }
