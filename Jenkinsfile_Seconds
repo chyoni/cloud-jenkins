@@ -123,7 +123,7 @@ pipeline {
                         sh("echo $ANDROID_HOME")
                         // ! map.testcases에 담긴 각 시나리오를 하나의 feature 파일로 변환 하는 과정에서 
                         // ! 첫 줄의 Feature Name을 지정
-                        def feature = (map.cucumber.feature_name != null) ? "Feature: ${map.cucumber.feature_name}\n\n\n" : "Feature: Default\n\n\n"
+                        
                         
 
                         if (fileExists("${map.cucumber.feature_path}")) {
@@ -135,9 +135,8 @@ pipeline {
 
                         // for (def result in clearResult) {
                         map.testcases.each { key, value ->
-                            println key
-                            println value
-
+                            def feature = (map.cucumber.feature_name != null) ? "Feature: ${map.cucumber.feature_name}\n\n\n" : "Feature: Default\n\n\n"
+                        
                             sh script: """ mkdir "${map.cucumber.feature_path}/${key}" """, returnStdout: false
                             def addedDescription = null
                             if (value.contains("\r\n")) {
